@@ -15,3 +15,11 @@ Not production-ready assets; art direction owner-conditionally approved; correct
 | 10 endgame | dd2e663007c68f88ace0ebc384069c7ab075b4d8160831670ff38b38c4d57b24 |
 
 Provenance: AI-generated concept imagery, 2026-11-24. See VisualSpec.md for corrections. Production asset register, rights, localization and motion implementation later. No claims of rendered Unity scenes or executable UI.
+
+## Reconciled static vector references, v0.2.0
+| Path | Git blob SHA-1 |
+|---|---|
+| design/wireframes/desktop-en-us.svg | 15da499cd3fbf07ca3d6b0c25bf5b0ba7eeeea0c |
+| design/wireframes/desktop-pt-br-150.svg | dd3876a8b662927eed2ef6b7200877fd4f16a232 |
+| design/wireframes/priority-and-states.svg | 7c7ef2c16235dfebe116cd4df82a09cc5ed56160 |
+Read-back and independently regenerated local git hash-object match all 3. CairoSVG render 1920×1080 visually inspected, no apparent clipping. Historic AI boards remain unchanged and non-normative; these static references are original geometric/text wireframes, no third-party image assets. No Unity or interactive QA performed.
