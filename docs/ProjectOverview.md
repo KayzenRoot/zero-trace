@@ -1,0 +1,2 @@
+# Project overview
+Premium Steam PC cybersecurity career simulator, Unity/C#, English-first and pt-BR. Career solo and separate persistent online; 20 specializations, ZERO Academy, ZERO ENGINE, NULL OS (30 apps), hardware and virtual economy, guilds, coop, controlled PvP, endgame. 420 authored mission briefs plus procedural content. Design goals 80–120h campaign, long-term mastery, not guaranteed playtime. No pay-to-win, real intrusion or external target access. Production planning pending.
