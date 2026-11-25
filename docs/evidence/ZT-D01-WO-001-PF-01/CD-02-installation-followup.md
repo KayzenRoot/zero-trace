@@ -67,7 +67,7 @@ Ação necessária: o proprietário deve verificar em leitura na conta já exist
 
 ## AC06 — Validação documental e checks
 
-Validação local: `python .github/scripts/validate_docs.py` — exit 0; saída `D00 historical lock; subsequent WOs require their own fresh execution lock` e `DOCS_VALIDATION_OK: 420 original briefs; 356 sequential prerequisites; release matrix; 20-node canonical DAG; 30 apps; 3 static SVGs; proposed governance; lock checks`. `git diff --check` — exit 0, sem erros. Checks remotos do SHA que contém esta evidência serão registrados na descrição da PR #23 após o push. Unity EditMode, PlayMode, build Windows e locale smoke: NOT RUN; nenhum projeto existe.
+Validação local: `python .github/scripts/validate_docs.py` — exit 0; saída `D00 historical lock; subsequent WOs require their own fresh execution lock` e `DOCS_VALIDATION_OK: 420 original briefs; 356 sequential prerequisites; release matrix; 20-node canonical DAG; 30 apps; 3 static SVGs; proposed governance; lock checks`. `git diff --cached --check` — exit 0, sem erros no diff staged. Checks remotos do SHA que contém esta evidência serão registrados na descrição da PR #23 após o push. Unity EditMode, PlayMode, build Windows e locale smoke: NOT RUN; nenhum projeto existe.
 
 ## AC07 — ADR-001 e Checkpoint Delta: propostas não ratificadas/não promovidas
 
