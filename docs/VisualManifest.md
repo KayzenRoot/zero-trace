@@ -1,5 +1,5 @@
 # Visual master v0.1.0 | 10 generated concept boards
-Not production-ready assets; owner approval and corrections required. Images kept outside public repository pending reconciliation, IP review and authorization. No licensed logos, real certifications or hardware brand names are accepted merely because a board displays them. Hashes below identify original PNGs (concept-only):
+Not production-ready assets; art direction owner-conditionally approved; corrections and rendered qualification outstanding. Images kept outside public repository pending reconciliation, IP review and authorization. All 10 original local PNG SHA-256 values independently recomputed and matched manifest on 2026-11-24; immutable historic reference, not production UI. No licensed logos, real certifications or hardware brand names are accepted merely because a board displays them. Hashes below identify original PNGs (concept-only):
 
 | Board | SHA-256 |
 |---|---|
