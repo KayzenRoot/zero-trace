@@ -1,6 +1,6 @@
 # Dependency DAG (GDD §22)
 
-D00 audited for design and governance, pending final CI and integration. D01+ blocked until dependencies approved, merged and Context Lock refreshed; no implementation authorization implied. These are parent WOs; split large nodes into independently auditable child WOs before execution. D19 not required for D18.
+D00 design/governance approved; effective on main after PR #1 integration. D01+ blocked until dependencies approved, merged and Context Lock refreshed; no implementation authorization implied. These are parent WOs; split large nodes into independently auditable child WOs before execution. D19 not required for D18.
 
 | WO | Modules | Title | Prerequisites | Model | Risk | Issue |
 |---|---|---|---|---|---|---|

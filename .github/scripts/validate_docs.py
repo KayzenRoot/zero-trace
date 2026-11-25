@@ -25,6 +25,9 @@ for path, expected in {
     catalog_path:"836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365",
 }.items():
     require(hashlib.sha256(Path(path).read_bytes()).hexdigest()==expected, path)
+for path in (gdd_path, catalog_path):
+    attr=subprocess.check_output(["git","check-attr","eol","--",path],text=True).strip()
+    require(attr.endswith(": eol: lf"),"canonical source checkout LF "+path)
 gdd=read(gdd_path)
 m=json.loads(read(catalog_path))["missions"]
 by_id={x["id"]:x for x in m}
@@ -113,9 +116,9 @@ if "State: D00 BLOCKED" in read("docs/Checkpoint.md"):
         require(actual==expected,"STALE D00 lock "+path)
 # The historical candidate lock stays immutable. Validate promotion fingerprints on the
 # D00 PR, the squash integration push, and local D00 branch checkouts.
-if "State: D00 APPROVED_PENDING_INTEGRATION" in read("docs/Checkpoint.md"):
+if "State: D00 APPROVED" in read("docs/Checkpoint.md"):
     promotion=json.loads(read("docs/locks/ZT-M00-WO-001-promotion.json"))
-    require(promotion["status"]=="APPROVED_PENDING_INTEGRATION" and promotion["base_main_sha"]==lock["base_main_sha"],"promotion lock status/base")
+    require(promotion["status"]=="APPROVED_BASELINE" and promotion["base_main_sha"]==lock["base_main_sha"],"promotion lock status/base")
     require(promotion["audited_candidate_sha"]=="b337e5ae754052623a900d27a9fb6516d1a98d2e","audited candidate")
     require(set(lock["git_blobs"]) <= set(promotion["git_blobs"]),"promotion lock coverage")
     event={}
