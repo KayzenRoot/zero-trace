@@ -13,40 +13,5 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
-      - name: Validate canonical sources and backlog
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import hashlib, json, re
-          from collections import Counter
-          from pathlib import Path
-          p = Path("design")
-          for name, expected in {
-              "ZERO_TRACE_GDD_MASTER_v0.2.0.md": "4352e4a2bdf4f7d3925caaa6314ba1b550efe1c3f917ba05acd50aa940ea5ed1",
-              "ZERO_TRACE_Mission_Catalog_v0.2.0.json": "836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365",
-          }.items():
-              assert hashlib.sha256((p/name).read_bytes()).hexdigest() == expected, name
-          missions = json.loads((p/"ZERO_TRACE_Mission_Catalog_v0.2.0.json").read_text(encoding="utf-8"))["missions"]
-          assert len(missions) == len({m["id"] for m in missions}) == 420
-          assert Counter(m["category"] for m in missions) == {"CAM":60,"PRO":100,"INV":50,"CLN":40,"ACA":100,"COO":40,"EVT":30}
-          assert Counter(m["release"] for m in missions) == {"V0.1":10,"V0.2":15,"V0.5":145,"V1.0":250}
-          required = "README Checkpoint Decisions Scope DefinitionOfDone Architecture Requirements Security TestPlan Deployment Backlog Sources ProjectOverview ModelRouting DataAndContracts VisualSpec VisualManifest ContextLock".split()
-          for name in required: assert Path("docs",name+".md").is_file(), name
-          wos = list(Path("docs/work-orders").glob("*.md"))
-          assert len(wos) == 20
-          graph = {}
-          for line in Path("docs/Backlog.md").read_text(encoding="utf-8").splitlines():
-              if not line.startswith("| ZT-"): continue
-              cells = [x.strip() for x in line.strip("|").split("|")]
-              wo = cells[0]
-              node = "D00" if wo == "ZT-M00-WO-001" else wo.split("-")[1]
-              graph[node] = set(re.findall(r"D\d{2}",cells[3]))
-              assert Path("docs/work-orders",wo+".md").is_file(), wo
-          assert set(graph) == {f"D{i:02}" for i in range(20)}
-          visited=set()
-          while len(visited)<20:
-              ready={k for k,v in graph.items() if k not in visited and v <= visited}
-              assert ready, "cycle or unknown prerequisite"
-              visited |= ready
-          print("DOCS_VALIDATION_OK: 420 missions, 20 parent WOs, acyclic DAG")
-          PY
+      - name: Validate canonical sources, visual and backlog
+        run: python3 .github/scripts/validate_docs.py
