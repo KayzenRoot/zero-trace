@@ -5,7 +5,7 @@ Date: 2026-11-24 America/Sao_Paulo. This is documentation preflight, not qualifi
 |---|---|---|
 | P00 repository | KayzenRoot/zero-trace; main baseline 932c5b83b7b160c38138e2c1ed506102a0ffe178; PR #1, no implementation | PASS |
 | P01 source | original GDD and mission JSON SHA-256 and Git blob read-back verified; 420 unique authored briefs | PASS |
-| P02 art provenance | ten original concept PNG hashes recomputed, all match manifest; owner direction conditional approval | PASS for provenance; final design verification open |
+| P02 art provenance | ten original concept PNG hashes recomputed, all match manifest; owner direction conditional approval | PASS for provenance; static SVG correction/read-back and local render reviewed, independent D00 audit pending |
 | P03 engine | Unity 6.3 LTS supported through Dec 2027; 6000.3.29f1 published Nov 19 2026 is candidate, not pin | CANDIDATE |
 | P04 licensing | Unity Personal eligibility threshold total finances <= US$200,000; actual owner eligibility, licenses, package terms not verified | OPEN before Unity installation/build |
 | P05 workstation | Windows editor, installed version, modules, disk, CPU/GPU/RAM, git and Codex access not measured in owner's environment | D01 PREFLIGHT REQUIRED |
