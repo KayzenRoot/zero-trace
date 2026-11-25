@@ -1,0 +1,21 @@
+{
+  "name": "ZeroTrace.Domain.Tests",
+  "rootNamespace": "ZeroTrace.Domain.Tests",
+  "references": [
+    "ZeroTrace.Domain"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": true
+}
