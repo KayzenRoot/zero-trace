@@ -1,6 +1,6 @@
 # ZT-D01-WO-001-IM-01/CD-02 — qualificação parcial do Unity Pipeline
 
-**Resultado: BLOCKED, com precondições atualizadas após a auditoria da PR.** A documentação oficial qualifica G-PIP-01 para uma única tentativa local, condicionada à contenção da sessão e à confirmação na UI oficial de que não há licença separada, trial, compra ou cobrança. O proprietário informou que entrou novamente no Hub sem trial ou cobrança, mas a atualização de licenças continua pendente e o Editor mostrou “License returned”; portanto, a licença utilizável não está comprovada. O pacote segue não resolvido e F02–F04 e os gates licenciados restantes não foram executados. Não há adoção técnica nem checkpoint promovido.
+**Resultado: BLOCKED, com precondições atualizadas após a auditoria da PR.** A documentação oficial qualifica G-PIP-01 para uma única tentativa local, condicionada à contenção da sessão e à confirmação na UI oficial de que não há licença separada, trial, compra ou cobrança. O proprietário informou que entrou novamente no Hub sem trial ou cobrança, mas a atualização de licenças continua pendente. Após o login, a janela normal do Editor reapareceu; antes disso, ele mostrou “License returned”, cujo aviso foi dispensado. Nenhuma dessas telas confirma a licença utilizável. O pacote segue não resolvido e F02–F04 e os gates licenciados restantes não foram executados. Não há adoção técnica nem checkpoint promovido.
 
 ## Identificação e preservação
 
@@ -98,7 +98,8 @@ Validações a executar no commit desta evidência: `.github/scripts/validate_do
 ## Delta de estado após o retorno ao Hub — 25/11/2026
 
 - O proprietário confirmou por mensagem que concluiu o login e que o Hub voltou sem trial ou cobrança. Isso é relato do proprietário; não prova ativação nem elegibilidade.
-- Na UI oficial observada nesta retomada, Configurações > Licenças ainda exibia “Atualizando licenças…” e o controle Atualizar estava desabilitado. O Editor existente exibiu “License returned”; fechar esse aviso não reativa a licença. A consulta estruturada anterior da CLI havia retornado o tipo Personal como `Assigned`, mas a divergência com o estado do Editor impede tratar isso como licença operacional.
+- Na UI oficial observada nesta retomada, Configurações > Licenças ainda exibia “Atualizando licenças…” e o controle Atualizar estava desabilitado. O Editor inicialmente exibiu “License returned”; após o login do proprietário, a janela normal do projeto reapareceu e os menus ficaram acessíveis. Dispensar o aviso ou abrir a janela normal não comprova licença ativa. A consulta estruturada anterior da CLI havia retornado o tipo Personal como `Assigned`, mas o Hub ainda pendente e a ausência de um status legível impedem tratar isso como licença operacional.
+- A inspeção somente de leitura de Help > Licenses não produziu um estado verificável: a automação não conseguiu selecionar o item do menu, e nenhuma tela de licença foi confirmada. Não houve aceitação de termos nem alteração do projeto; a tentativa não será repetida nesta retomada.
 - O inventário da UI mostrou uma única janela do Editor existente apontando para o projeto autorizado. Nenhuma instalação ou resolução de pacote foi iniciada nesta retomada. O Package Manager não pôde ser qualificado com o Editor sem licença utilizável; `com.unity.pipeline@1.0.1` continua ausente do manifesto, lock e cache.
 - AC01 permanece PASS conforme o Source Check já registrado; não foi repetido o preflight completo. AC02 permanece BLOCKED até o Hub concluir a atualização e o Editor abrir sem aviso de licença retornada. AC03/F02–F04, AC04/resolução real, AC05/compilação e cinco testes EditMode, e AC06/reimportação sequencial não foram executados. AC07 permanece parcial; AC08 segue bloqueado pelos limites de licença e segurança descritos abaixo.
 - Durante o inventário de janelas, a ferramenta de UI incluiu automaticamente metadados de redirecionamento de autenticação em seu resultado. Nenhum valor foi transcrito para este documento, commit ou PR, e nenhum log bruto foi consultado nesta retomada; não há verificação de revogação remota nem base para afirmar contenção completa fora do repositório. Não repetirei esses dados. A condição de segurança permanece aberta até o proprietário verificar sessões ativas/revogação na conta oficial Unity ou obter confirmação do suporte, se necessário.
@@ -108,7 +109,7 @@ Validações a executar no commit desta evidência: `.github/scripts/validate_do
 | Critério | Estado nesta retomada |
 | --- | --- |
 | AC01 — fontes e Context Lock | PASS histórico registrado; sem novo Source Check completo |
-| AC02 — licença e Editor oficial | BLOCKED: Hub em atualização pendente e Editor com aviso “License returned” |
+| AC02 — licença e Editor oficial | BLOCKED: Hub em atualização pendente; janela do Editor voltou, mas licença ativa não foi comprovada |
 | AC03 — configurações e correções F02–F04 | NOT RUN; dependem de Editor licenciado |
 | AC04 — manifest, lock e Pipeline | BLOCKED; pacote não resolvido nem instalado |
 | AC05 — compilação e cinco testes EditMode | NOT RUN |
