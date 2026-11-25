@@ -2,6 +2,7 @@
 from collections import Counter
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -110,4 +111,24 @@ if "State: D00 BLOCKED" in read("docs/Checkpoint.md"):
     for path,expected in lock["git_blobs"].items():
         actual=subprocess.check_output(["git","hash-object","--",path],text=True).strip()
         require(actual==expected,"STALE D00 lock "+path)
-print("DOCS_VALIDATION_OK: 420 original briefs; 356 sequential prerequisites; release matrix; 20-node canonical DAG; 30 apps; 3 static SVGs; proposed governance; candidate lock")
+# The historical candidate lock stays immutable. Validate promotion fingerprints on the
+# D00 PR, the squash integration push, and local D00 branch checkouts.
+if "State: D00 APPROVED_PENDING_INTEGRATION" in read("docs/Checkpoint.md"):
+    promotion=json.loads(read("docs/locks/ZT-M00-WO-001-promotion.json"))
+    require(promotion["status"]=="APPROVED_PENDING_INTEGRATION" and promotion["base_main_sha"]==lock["base_main_sha"],"promotion lock status/base")
+    require(promotion["audited_candidate_sha"]=="b337e5ae754052623a900d27a9fb6516d1a98d2e","audited candidate")
+    require(set(lock["git_blobs"]) <= set(promotion["git_blobs"]),"promotion lock coverage")
+    event={}
+    if os.environ.get("GITHUB_EVENT_PATH"):
+        event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+    branch=subprocess.check_output(["git","branch","--show-current"],text=True).strip()
+    message=subprocess.check_output(["git","log","-1","--format=%s"],text=True).strip()
+    d00_context=(event.get("number")==1 or branch=="docs/zt-m00-wo-001" or message.startswith("docs(ZT-M00-WO-001):"))
+    if d00_context:
+        for path,expected in promotion["git_blobs"].items():
+            actual=subprocess.check_output(["git","hash-object","--",path],text=True).strip()
+            require(actual==expected,"STALE promotion lock "+path)
+        print("D00_PROMOTION_LOCK_OK: "+str(len(promotion["git_blobs"]))+" fingerprints")
+    else:
+        print("D00 historical lock; subsequent WOs require their own fresh execution lock")
+print("DOCS_VALIDATION_OK: 420 original briefs; 356 sequential prerequisites; release matrix; 20-node canonical DAG; 30 apps; 3 static SVGs; proposed governance; lock checks")

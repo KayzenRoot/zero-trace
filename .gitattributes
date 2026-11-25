@@ -1,0 +1,9 @@
+# Preserve exact LF bytes across Windows/Linux checkouts for canonical text sources.
+.gitattributes text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.svg text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+.gitignore text eol=lf
