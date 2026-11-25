@@ -1,6 +1,6 @@
 # ZT-D01-WO-001-IM-01/CD-02 — qualificação parcial do Unity Pipeline
 
-**Resultado: BLOCKED.** A integração local do Pipeline não iniciou o servidor no Editor. G-PIP-01 não tem prova explícita suficiente de preço/entitlement Personal do pacote, G-PIP-02 falhou no pós-estado, e por isso F02–F04 e os gates licenciados restantes não foram executados. Esta evidência registra o bloqueio; não aprova adoção técnica nem checkpoint.
+**Resultado: BLOCKED, com precondições atualizadas após a auditoria da PR.** A documentação oficial agora qualifica G-PIP-01 para uma única tentativa local, condicionada à contenção da sessão e à confirmação na UI oficial de que não há licença separada, trial, compra ou cobrança. A sessão do Hub foi encerrada localmente; o login do proprietário e a revalidação da licença aguardam. O pacote segue não resolvido e F02–F04 e os gates licenciados restantes não foram executados. Não há adoção técnica nem checkpoint promovido.
 
 ## Identificação e preservação
 
@@ -32,15 +32,15 @@ No HEAD autorizado `46cc6b6`, os checks remotos anteriores à publicação estav
 
 ## G-PIP-01 — custo, licença e compatibilidade do candidato
 
-A Unity documenta o CLI como gratuito e separado do Unity AI; também documenta que o Pipeline controla um Editor 6.0+ local e funciona offline, por interface local autenticada ([CLI e licença](https://docs.unity.com/en-us/unity-cli/replace-mcp-server-unity-cli), [instalação/uso do Pipeline](https://docs.unity.com/en-us/unity-cli/unity-pipeline/unity-pipeline-package), [segurança](https://docs.unity.com/en-us/unity-cli/unity-cli-security)). O registro UPM oficial ofereceu `com.unity.pipeline` `1.0.1`, cujo metadado declara compatibilidade `6000.0`; a licença incluída no artefato referencia os Unity Terms of Service. O pacote declara dependências `com.unity.test-framework 1.1.33`, `com.unity.nuget.mono-cecil 1.11.6`, `com.unity.modules.uielements 1.0.0`, `com.unity.modules.jsonserialize 1.0.0`, `com.unity.modules.screencapture 1.0.0` e `com.unity.nuget.newtonsoft-json 3.0.2`. O SHA-1 do arquivo do registro conferiu com o metadado oficial: `c0af79690db1fdbc7076658c338a320f40a3b41d`.
+A FAQ oficial de preços da Unity declara CLI, MCP e plugin oficial gratuitos, sem limite de concorrência; distingue-os do assistente integrado, cujo trial Personal pode converter-se em US$ 10/mês. O MCP do CLI é construído sobre o Unity Pipeline. A documentação do pacote exige Editor 6.0+ e CLI e descreve a instalação local pelo Package Manager/CLI, com o projeto aberto ([FAQ de preços](https://unity.com/features/ai), [MCP do CLI](https://docs.unity.com/en-us/unity-cli/replace-mcp-server-unity-cli), [pacote Pipeline](https://docs.unity.com/en-us/unity-cli/unity-pipeline/unity-pipeline-package)). Os termos §2.7 subordinam o uso do Package Manager aos direitos do Editor e a eventuais termos do pacote; §2.5 exclui Unity Build Server com Personal, produto que não será usado nesta rota local de Editor gráfico ([Unity Editor Software Terms](https://unity.com/legal/editor-terms-of-service/software)). Combinadas com o metadado oficial UPM e a licença `Unity Terms of Service` do artefato, essas fontes sustentam custo zero para a rota local CLI/MCP/Pipeline — sem estender isso a outros produtos Unity. O metadado do candidato `com.unity.pipeline` `1.0.1` declara compatibilidade `6000.0` e dependências `com.unity.test-framework 1.1.33`, `com.unity.nuget.mono-cecil 1.11.6`, `com.unity.modules.uielements 1.0.0`, `com.unity.modules.jsonserialize 1.0.0`, `com.unity.modules.screencapture 1.0.0` e `com.unity.nuget.newtonsoft-json 3.0.2`; o SHA-1 do arquivo conferiu com o metadado do registro: `c0af79690db1fdbc7076658c338a320f40a3b41d`.
 
-Isso confirma origem, identidade e compatibilidade declarada com a família do Editor instalado. **Não foi encontrada declaração oficial explícita de preço/entitlement Personal para o pacote em si**; a documentação consultada confirma a gratuidade do CLI, não formula uma garantia de custo zero específica para esse pacote. A licença Unity Personal está atribuída, mas não substitui a prova que o gate condicional exige. Nenhum serviço cloud, Unity AI, runner ou cobrança foi iniciado ou observado.
+O candidato é oficial e compatível com a família declarada do Editor instalado; não há resolução de dependências nesta etapa. Nenhum serviço cloud, Unity AI, runner, trial ou cobrança foi iniciado ou observado. A página oficial diferencia explicitamente o trial pago do assistente integrado das ferramentas gratuitas de CLI/MCP/plugin; não abrir o assistente nem iniciar trial.
 
 O projeto atual tem 36 dependências diretas e 54 entradas no lock, sem dependência direta ausente; SHA-256 do manifesto `8be240714b36b1a362441ed54a4be4daf081d3591f2b5e311d3514936c75b1b5` e do lock `f06ed742e478675f65ff74895068fdc72579ea76624101b9eb5142ac7383fcab`. As versões já resolvidas do Test Framework (`1.6.0`) e Newtonsoft (`3.2.2`) diferem das solicitadas no metadado do candidato (`1.1.33` e `3.0.2`); sem resolução real não é possível concluir se há downgrade, conflito ou resolução compatível.
 
-**Estado G-PIP-01: BLOCKED para instalação/adoção.** A prova de origem e compatibilidade declarada é positiva; falta confirmação oficial inequívoca de entitlement/preço zero sob Personal. Nenhuma instalação resolvida foi retida.
+**Estado G-PIP-01: PASS documental, condicionado à UI oficial.** A auditoria mais recente considerou as fontes combinadas suficientes para uma única tentativa local depois da contenção da sessão e da confirmação visível de ausência de licença separada, trial, compra ou cobrança. O candidato continua sem instalação resolvida.
 
-**Desvio de sequência registrado:** apesar da prova incompleta, a CLI de instalação foi invocada uma vez. Ela gravou temporariamente a referência no manifesto, mas o Package Manager não resolveu o pacote nem criou cache/lock. A referência foi revertida; não houve cobrança ou serviço iniciado. Essa tentativa não satisfaz o gate pré-instalação e não deve ser repetida antes da confirmação oficial.
+**Desvio de sequência registrado:** na execução anterior, a CLI de instalação foi invocada uma vez antes de o gate documental ser fechado. Ela gravou temporariamente a referência no manifesto, mas o Package Manager não resolveu o pacote nem criou cache/lock. A referência foi revertida; não houve cobrança ou serviço iniciado. Não repetir essa tentativa pela CLI; seguir uma única instalação pelo Package Manager oficial após as precondições.
 
 ## G-PIP-02 — tentativa controlada e resultado
 
@@ -53,9 +53,9 @@ Com a única instância autorizada e o projeto existente, foram usados somente c
 
 Não foi configurado plugin Unity/MCP, arquivo persistente do Codex, runtime Pipeline, define `ENABLE_RUNTIME_PIPELINE`, firewall, túnel ou serviço externo. A busca estática nos arquivos versionados não encontrou `ENABLE_RUNTIME_PIPELINE`; as duas opções efetivas de runtime não puderam ser inspecionadas no Editor.
 
-## G-PIP-03 — F01–F04 e validação técnica
+## Contenção local do incidente (25/11/2026)
 
-- **F01 — instância licenciada:** parcialmente comprovado; Personal `Assigned`, Editor correto aberto e uma única janela/processo observado. Não houve compilação/teste serial nem fechamento normal, pois o servidor não ficou pronto e a instância permanece aberta.
+- **F01 — instância licenciada:** parcialmente comprovado; Personal `Assigned` foi observado antes da saída do Hub. Agora há um Editor principal visível e dois processos filhos dele; a licença efetiva após a saída precisa de revalidação. Não houve compilação/teste serial nem fechamento normal.
 - **F02 — referência Input Settings:** pendente. O GUID `289c1b55c9541489481df5cc06664110` aparece em `ProjectSettings/EditorBuildSettings.asset`; a resolução pelo AssetDatabase não pôde ser executada. Nenhuma referência foi removida às cegas.
 - **F03 — identificador, Analytics e alvo:** pendente e não alterado. Os arquivos versionados ainda declaram `companyName: KayzenRoot`, `productName: Zero Trace`, identificador `com.DefaultCompany.3D-Project`, `submitAnalytics: 1` e `activeInputHandler: 0`; `scriptingBackend` não tem override visível. O alvo/backend efetivo deve ser confirmado em Player Settings. Não alterei configurações sem validação oficial.
 - **F04 — dependências builtin:** pendente. Sem resolução ativa do Package Manager, não foi possível justificar remoções ou demonstrar necessidade efetiva. Nenhuma dependência preexistente foi removida.
@@ -72,17 +72,17 @@ Durante o diagnóstico, uma saída de leitura de `Editor.log` revelou fragmentos
 | Critério | Estado | Evidência / limite |
 | --- | --- | --- |
 | AC01 — fontes, Context Lock e governança | PASS | 28/28 blobs da base, 30/30 do snapshot histórico, 87/87 fingerprints brutos r2, 2/2 SHA-256; regraset 28038825 ativo sem bypass; fontes preservadas. |
-| AC02 — licença e invocação oficial | PARCIAL | Unity Personal `Assigned`; CLI 1.0.1 abriu o Editor 6000.3.29f1. Integração Pipeline não iniciou e G-PIP-01 não comprovou preço/entitlement específico do pacote. |
+| AC02 — licença e invocação oficial | PARCIAL | Personal `Assigned` e abertura pelo CLI foram observados antes da saída do Hub. Agora a sessão local está encerrada; revalidar licença depois do login do proprietário. Integração Pipeline ainda não iniciou. |
 | AC03 — template e configurações F02/F03 | BLOCKED | GUID precisa de AssetDatabase; Analytics está ligado; identificador segue default e alvo/backend efetivo não foi comprovado. |
 | AC04 — manifest/lock e pacotes | BLOCKED | A entrada Pipeline foi removida; o grafo existente é estaticamente consistente, mas não houve resolução real do candidato nem avaliação das versões divergentes. |
 | AC05 — compilação e cinco testes | BLOCKED / NOT RUN | Nenhuma compilação explícita nem teste EditMode foi executado/contado por interface qualificada. |
 | AC06 — reimportação limpa e CI | BLOCKED / NOT RUN | Reimportação sequencial não executada. Validação documental local e checks do HEAD anterior à publicação são registrados separadamente; Unity CI em nuvem continua diferido para QA-01. |
 | AC07 — Evidence Bundle, ADR-010 e Checkpoint Delta | PARCIAL | Este Evidence Bundle publicado; ADR-010 segue proposta condicional, não adotada. Delta de checkpoint abaixo, não promovido. |
-| AC08 — escopo, custo e segurança | BLOCKED | Sem cobranças, cloud, gameplay, bypass, merge, promoção ou IM-02. Porém a prova de custo/entitlement do pacote está incompleta e houve exposição transitória de fragmentos de token na saída diagnóstica; nenhum valor foi versionado. |
+| AC08 — escopo, custo e segurança | BLOCKED | Sem cobrança, cloud, gameplay, bypass, merge, promoção ou IM-02. G-PIP-01 tem prova documental condicional; falta confirmação visual sem oferta separada. A sessão do Hub foi encerrada localmente, mas revogação externa não foi verificada. Fragmentos e IDs não foram repetidos nem versionados. |
 
 ### Proposta de ADR-010 — não adotada
 
-Manter ZT-ADR-010 no estado `OWNER AUTHORIZED CONDITIONAL QUALIFICATION / PROPOSED TECHNICAL ADOPTION`. Não atualizar `docs/Decisions.md` nem declarar adoção até que Unity confirme o custo zero/entitlement Personal do `com.unity.pipeline`, o Package Manager gere lock real compatível, a conexão autenticada somente em localhost seja alcançável, o runtime permaneça desativado e todos os gates locais licenciados passem. ADR-009 permanece preservada: CI Unity em nuvem segue `DEFERRED_NOT_QUALIFIED_QA-01`.
+Manter ZT-ADR-010 no estado `OWNER AUTHORIZED CONDITIONAL QUALIFICATION / PROPOSED TECHNICAL ADOPTION`. Não atualizar `docs/Decisions.md` nem declarar adoção até o proprietário revalidar Personal na UI, o Package Manager gerar lock real compatível, a conexão autenticada somente em localhost ser alcançável, o runtime permanecer desativado e todos os gates locais licenciados passarem. ADR-009 permanece preservada: CI Unity em nuvem segue `DEFERRED_NOT_QUALIFIED_QA-01`.
 
 ### Checkpoint Delta proposto — não promovido
 
@@ -95,4 +95,4 @@ Manter ZT-ADR-010 no estado `OWNER AUTHORIZED CONDITIONAL QUALIFICATION / PROPOS
 
 Validações a executar no commit desta evidência: `.github/scripts/validate_docs.py`, `git diff --check`, conferência dos hashes de manifesto/lock e inspeção de escopo/segredos. Nenhum resultado futuro é antecipado neste arquivo; o corpo da PR registrará o HEAD remoto e seus checks concluídos.
 
-**Conclusão do executor: BLOCKED.** Requer prova oficial de custo/entitlement do pacote e operação oficial do proprietário para a resolução do Package Manager; após isso, este mesmo CD-02 pode continuar sem reinstalação de ferramentas, sem nova PR e sem tocar no checkpoint.
+**Conclusão do executor: BLOCKED, aguardando login do proprietário e confirmação visual no Hub/Package Manager.** Após essa confirmação, seguir uma única tentativa de resolução oficial; se não resolver sem downgrade ou oferta paga, registrar o código/categoria sanitizados e usar a alternativa manual da ADR-010, sem repetir tentativas. Sem nova PR, promoção ou alteração de ADR-009.
