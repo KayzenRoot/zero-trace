@@ -21,3 +21,6 @@ Sources: https://unity.com/releases/unity-6/support ; https://unity.com/releases
 
 ## D01 PF-01 qualified baseline (2026-11-25)
 P03 local Editor 6000.3.29f1 and Windows Mono installed, Hub registered; P04 Personal active listing observed and owner eligibility/terms attested (refresh unconfirmed; recheck before use); P05 workstation inventory evidenced, VRAM unknown, CLI signed/previously executed but current shell invocation must be verified. Package versions/manifest lock IM-01, not preflight. P07 unchanged. UBA Free remains candidate, cloud CI deferred to QA-01 by ADR-009. No gameplay, project, builds/tests or services created. See PF-01 audit and PR #23; these D01 observations supersede earlier D00 unqualified statuses only where evidenced.
+
+## IM-01 qualified baseline (2026-11-25)
+Personal renewed by owner; CLI/Pipeline 1.0.1 connected, Windows x64 Mono confirmed (dry run), 37 direct/55 resolved, two serial 5/5 EditMode runs and clean reimport. Owner session containment attested, no independent revocation proof. Before each new WO check operational license/invocation, not repeat activation without real error. QA-01 cloud not qualified, no build or deployment.
