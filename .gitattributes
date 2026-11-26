@@ -7,3 +7,9 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 .gitignore text eol=lf
+
+# Unity-generated YAML uses one trailing space for serialized empty scalar values.
+# Limit the whitespace exception to generated project assets and settings.
+Assets/**/*.asset text eol=lf whitespace=-blank-at-eol
+Assets/**/*.meta text eol=lf whitespace=-blank-at-eol
+ProjectSettings/**/*.asset text eol=lf whitespace=-blank-at-eol
