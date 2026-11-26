@@ -1,0 +1,14 @@
+{
+  "name": "ZeroTrace.Presentation",
+  "rootNamespace": "ZeroTrace.Presentation",
+  "references": ["Unity.Localization"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

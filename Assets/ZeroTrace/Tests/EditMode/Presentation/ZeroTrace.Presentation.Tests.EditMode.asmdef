@@ -1,0 +1,15 @@
+{
+  "name": "ZeroTrace.Presentation.Tests.EditMode",
+  "rootNamespace": "ZeroTrace.Presentation.Tests.EditMode",
+  "references": ["ZeroTrace.Presentation", "Unity.Localization"],
+  "includePlatforms": ["Editor"],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "noEngineReferences": false
+}
