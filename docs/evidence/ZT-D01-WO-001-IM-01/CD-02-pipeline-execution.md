@@ -219,3 +219,57 @@ Manter `ZT-ADR-010` como proposta condicional, sem atualizar `docs/Decisions.md`
 - `ZT-D01-WO-001-IM-01/CD-02` permanece **BLOCKED**, sem aceitação final e sem avanço para IM-02.
 - Não alterei o checkpoint canônico. Exigir AssetDatabase para o GUID, resultado real 5/5 EditMode, reimportação limpa, verificação do alvo/runtime e decisão do proprietário sobre a contenção do incidente antes de fechar o WO.
 - Nenhum merge, despesa, serviço cloud, implementação de gameplay ou alteração em ADR-009 foi realizada.
+
+
+
+
+
+## Verificação dos gates restantes no candidato a776839
+
+Base `a907ae071aad6cec7f2b1bca0b111d7272527601`, HEAD de entrada `a776839a1d533f7fa0778801bade8637866b6f1b`, issue #24 aberta e PR #25 em draft. A auditoria mais recente da PR, de 25/11/2026 às 21:31 no horário de São Paulo, orientou usar o Test Runner conectado do Pipeline e manter AC08 bloqueado enquanto a contenção externa não estiver comprovada.
+
+O Source Check confirmou 28/28 blobs da base, 30/30 do snapshot histórico, 87/87 do snapshot r2 e 2/2 SHA-256 das fontes canônicas. No HEAD de entrada, os 84/87 blobs r2 restantes coincidem, com as três alterações autorizadas de pacote e Player Settings já publicadas. A única alteração adicional em um arquivo do mapa r2 é `ProjectSettings/EditorBuildSettings.asset`, dentro do escopo F02. O ruleset 28038825 segue ativo, com zero atores de bypass. Os dois Context Locks, ADR-009, proposta ADR-010 e checkpoint canônico foram preservados.
+
+### Editor e correção F02–F04
+
+- F01. Reutilizei Unity CLI 1.0.1, Pipeline 1.0.1 e Editor 6000.3.29f1 com Personal renovada conforme atestação do proprietário. Usei `--project-path` em cada chamada. O Editor principal do projeto foi encerrado com `editor quit`, sem opção de descarte ou encerramento forçado. A contagem anterior à abertura da cópia limpa foi zero processos do Editor. O executável da CLI também se chama `unity.exe` no Windows e foi distinguido pelo caminho.
+- F02. O schema do comando oficial somente de leitura `asset get_import_settings --asset <path|guid|globalId>` confirmou o método. O controle positivo com `Assets/Scenes/SampleScene.unity` retornou código 0. Para `289c1b55c9541489481df5cc06664110`, o Editor respondeu `Unknown GUID` (CLI 13). Sem o Editor aberto, removi somente a entrada órfã `com.unity.input.settings.actions` de `EditorBuildSettings.asset`, deixando o mapa vazio. O projeto corrigido reabriu e compilou. Dos 23 caminhos de Assets versionados, os arquivos têm metadados correspondentes e os 14 GUIDs de metadados são únicos.
+- F03. `settings.player get` retornou backend `Mono2x`. A validação sem execução de build `build run --dry-run true` retornou `StandaloneWindows64`. `settings.runtime_pipeline get` retornou `enable-in-development-builds=false` e `enable-in-release-builds=false`. As definições `ENABLE_RUNTIME_PIPELINE` e `ENABLE_RUNTIME_PIPELINE_DEV` estão ausentes dos arquivos versionados de Assets, Packages e ProjectSettings.
+- F04. Mantive a justificativa aceita na auditoria para os módulos nativos do template. O grafo permanece com 37 dependências diretas e 55 entradas no lock. As versões e profundidades diretas conferem e todas as arestas têm destino no lock.
+
+### Compilação, Test Runner e reimportação
+
+O catálogo conectado retornou os schemas de `test list`, `test run` e `test status`. `test list --mode editor` descobriu os cinco métodos da suíte. Usei `test run --mode editor --filter ZeroTrace.Domain.Tests.StableIdentifierTests --filter-type TestName --async-tests true` e aguardei `test status` chegar a `completed`. A chamada antiga `unity test` não foi repetida. A [referência oficial da CLI](https://docs.unity.com/en-us/unity-cli/reference/editor-project-commands) distingue as duas interfaces.
+
+
+| Projeto | Recompilação | Resultado EditMode |
+| --- | --- | --- |
+| Checkout de execução após F02 | `unity recompile`: código 0, `up_to_date` | `completed`, 5 aprovados, 0 falhas, 0 ignorados, 0 inconclusivos |
+| Clone local novo, sem `Library` antes da abertura | `unity open --until-ready`: código 0. `unity recompile`: código 0, `up_to_date`, 0 erros e 0 avisos | `completed`, 5 aprovados, 0 falhas, 0 ignorados, 0 inconclusivos |
+
+Métodos aprovados nas duas execuções: `DefaultValue_IsInvalidAndStable`, `Parse_EmptyGuid_IsRejected`, `Parse_NonCanonicalValues_AreRejected`, `Parse_SameCanonicalGuid_ProducesEqualValues` e `Parse_ValidCanonicalGuid_PreservesValue`. Cada execução começou com uma única janela de Editor. No clone, Mono e as duas opções Runtime desligadas foram relidos pelo Pipeline. A última instância foi fechada com `editor quit`, código 0.
+
+O clone foi criado em caminho novo a partir de `a776839` com checkout LF transitório. A única sobreposição foi a cópia exata do arquivo corrigido em F02. A comparação após a importação e os testes confirmou igualdade byte a byte em 23/23 arquivos de Assets, 2/2 de Packages e 26/26 de ProjectSettings. Para reproduzir os hashes do conjunto, ordenar os caminhos versionados e concatenar, para cada arquivo, o caminho UTF-8, um byte nulo e os 32 bytes do SHA-256 do conteúdo. Calcular SHA-256 dessa concatenação.
+
+| Conjunto | SHA-256 |
+| --- | --- |
+| Assets | `2b922a68397361fd5ccb7872f02f35793c112e903410d8fe1aacfa7fcd685f46` |
+| Packages | `cda6376992b3e1d18ba49a778427f38b245aa36423849346f40527b13665061a` |
+| ProjectSettings | `7b396234042f06488789af429b87e11b9d896a91f030949de2112ea91223d714` |
+
+### AC01–AC08 e recomendação
+
+| Critério | Resultado |
+| --- | --- |
+| AC01 | PASS. Source Check, ruleset e delta conferidos. |
+| AC02 | PASS operacional, conforme evidências da renovação e do Editor licenciado em uso. |
+| AC03 | PASS. F02 resolvido e alvo Windows x64, Mono e Runtime confirmados. |
+| AC04 | PASS. Grafo, versões e identidade dos arquivos de dependências preservados. |
+| AC05 | PASS. Duas execuções de 5/5 pela interface oficial conectada, uma instância por vez. |
+| AC06 | PASS local. Reimportação sem cache, arquivos idênticos e validação documental e integridade locais. A PR registra os checks do SHA publicado. |
+| AC07 | Evidência complementar publicada e delta proposto registrado abaixo. |
+| AC08 | BLOCKED. A renovação da sessão foi informada pelo proprietário. O encerramento local foi registrado. Continua sem comprovação a invalidação remota da sessão anterior ou a contenção externa do incidente histórico. |
+
+A validação local inclui `py -3 .github/scripts/validate_docs.py`, `git diff --check`, conferência do delta e busca de padrões de credenciais nas linhas adicionadas, sem registrar valores. Nenhum arquivo de credencial ou log sensível foi lido. A renovação e o encerramento locais não comprovam revogação remota. A ação pendente é o proprietário confirmar o estado da sessão anterior pela conta oficial ou obter confirmação do suporte Unity, podendo registrar somente a ação e seu resultado.
+
+**Checkpoint Delta proposto.** Registrar F02, alvo/backend, Runtime, testes e reimportação local como comprovados. Manter IM-01/CD-02 **BLOCKED** por AC08. ADR-010 segue proposta, o checkpoint segue sem promoção e ADR-009 reserva a qualificação de CI Unity em nuvem a QA-01.
