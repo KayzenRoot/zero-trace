@@ -1,0 +1,86 @@
+.startup-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 5%;
+    background-color: #0B0D10;
+}
+.startup-panel {
+    width: 80%;
+    max-width: 760px;
+    min-width: 300px;
+    padding-top: 42px;
+    padding-right: 48px;
+    padding-bottom: 44px;
+    padding-left: 48px;
+    background-color: #1A1E24;
+    border-left-width: 3px;
+    border-left-color: #B7FF2E;
+}
+.product-title {
+    color: #E6EDF6;
+    font-size: 44px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    margin-bottom: 16px;
+}
+.accent-rule {
+    width: 72px;
+    height: 3px;
+    margin-bottom: 24px;
+    background-color: #A78BFF;
+}
+.status-label {
+    color: #E6EDF6;
+    font-size: 18px;
+    white-space: normal;
+    margin-bottom: 28px;
+}
+.language-label {
+    color: #B7FF2E;
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 10px;
+}
+.locale-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.locale-button {
+    min-height: 48px;
+    min-width: 168px;
+    margin-right: 12px;
+    margin-bottom: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    color: #E6EDF6;
+    background-color: #0B0D10;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-color: #515B68;
+    font-size: 16px;
+}
+.locale-button--focused {
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-color: #B7FF2E;
+}
+.locale-button--selected {
+    background-color: #252D19;
+    border-color: #B7FF2E;
+}
+.locale-button--selected.locale-button--focused {
+    border-color: #B7FF2E;
+}
+.locale-button:disabled {
+    color: #9AA4B1;
+    background-color: #1A1E24;
+}
