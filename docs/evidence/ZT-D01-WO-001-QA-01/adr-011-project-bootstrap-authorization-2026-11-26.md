@@ -57,3 +57,15 @@ No UBA/service, trial, terms acceptance, credential, webhook, billing/payment ch
 - [ ] Project-scoped plan/entitlement/quota read-back attached, or explicitly recorded unavailable.
 
 **Current verdict:** ADR-011 approved for narrow bootstrap; BG01 pending execution; QA-01 remains BLOCKED; D01 incomplete; D02/release blocked.
+
+## GitHub read-back after the ADR-011 documentation update
+
+- PR #28 HEAD at the final pre-lock audit: `18f18d94a6f9e1ec2e3933e85d5bee5863f6a7c2`.
+- Base `main`: `1b72c6773fc9edd39c44239ec127a75d7ca9d158`; unchanged.
+- PR remains open and draft; no merge.
+- Exact-HEAD checks: `docs-validation`, `Socket Security: Project Report`, and `Socket Security: Pull Request Alerts` all completed successfully (3/3).
+- Changed paths: 11 documentation-only files; zero changes under `Assets/`, `Packages/` or `ProjectSettings/`.
+- The six paths listed in `authorized_branch_deltas` in the Context Lock were read back and their Git blob SHAs matched exactly.
+- Ruleset 28038825 remains active with zero bypass, squash-only, linear history and required `docs-validation`.
+- No Unity Dashboard write or project creation was performed in this run. The empty-project action remains authorized but pending execution in the authenticated Codex Desktop browser session. No project existence is claimed.
+
