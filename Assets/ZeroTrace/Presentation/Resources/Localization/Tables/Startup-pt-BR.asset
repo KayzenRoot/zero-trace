@@ -42,6 +42,10 @@ MonoBehaviour:
     m_Localized: "A funda\xE7\xE3o local est\xE1 pronta para continuar neste idioma."
     m_Metadata:
       m_Items: []
+  - m_Id: 1007
+    m_Localized: "Os dados locais de inicializa\xE7\xE3o est\xE3o indispon\xEDveis."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

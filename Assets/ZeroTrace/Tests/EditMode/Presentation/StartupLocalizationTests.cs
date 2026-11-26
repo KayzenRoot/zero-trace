@@ -20,7 +20,8 @@ namespace ZeroTrace.Presentation.Tests.EditMode
             "foundation.language.label",
             "foundation.language.en",
             "foundation.language.pt",
-            "foundation.status.expansion"
+            "foundation.status.expansion",
+            "foundation.status.unavailable"
         };
 
         [Test]
@@ -58,6 +59,21 @@ namespace ZeroTrace.Presentation.Tests.EditMode
             var englishExpansion = english.GetEntry("foundation.status.expansion").LocalizedValue;
             var portugueseExpansion = portuguese.GetEntry("foundation.status.expansion").LocalizedValue;
             Assert.That(portugueseExpansion.Length, Is.GreaterThanOrEqualTo((int)Math.Ceiling(englishExpansion.Length * 1.35d)));
+        }
+
+        [Test]
+        public void UnavailableStatusIsLocalizedAndDistinctFromReadyStatus()
+        {
+            var english = AssetDatabase.LoadAssetAtPath<StringTable>(TablePath + "Startup-en-US.asset");
+            var portuguese = AssetDatabase.LoadAssetAtPath<StringTable>(TablePath + "Startup-pt-BR.asset");
+
+            var englishUnavailable = english.GetEntry("foundation.status.unavailable").LocalizedValue;
+            var portugueseUnavailable = portuguese.GetEntry("foundation.status.unavailable").LocalizedValue;
+
+            Assert.That(englishUnavailable, Does.Contain("unavailable"));
+            Assert.That(portugueseUnavailable, Does.Contain("indisponíveis"));
+            Assert.That(englishUnavailable, Is.Not.EqualTo(english.GetEntry("foundation.status").LocalizedValue));
+            Assert.That(portugueseUnavailable, Is.Not.EqualTo(portuguese.GetEntry("foundation.status").LocalizedValue));
         }
 
         [Test]

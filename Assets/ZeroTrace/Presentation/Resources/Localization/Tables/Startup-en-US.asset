@@ -42,6 +42,10 @@ MonoBehaviour:
     m_Localized: The local foundation is ready to continue.
     m_Metadata:
       m_Items: []
+  - m_Id: 1007
+    m_Localized: Local startup data is unavailable.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

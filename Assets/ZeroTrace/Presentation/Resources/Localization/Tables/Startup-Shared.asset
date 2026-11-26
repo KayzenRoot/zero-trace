@@ -39,6 +39,10 @@ MonoBehaviour:
     m_Key: foundation.status.expansion
     m_Metadata:
       m_Items: []
+  - m_Id: 1007
+    m_Key: foundation.status.unavailable
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

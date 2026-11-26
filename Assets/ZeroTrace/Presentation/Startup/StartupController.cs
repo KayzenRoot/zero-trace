@@ -40,9 +40,20 @@ namespace ZeroTrace.Presentation
         private const string PortugueseCode = "pt-BR";
         private const string TitleKey = "foundation.title";
         private const string StatusKey = "foundation.status";
+        private const string UnavailableKey = "foundation.status.unavailable";
         private const string LanguageKey = "foundation.language.label";
         private const string EnglishLabelKey = "foundation.language.en";
         private const string PortugueseLabelKey = "foundation.language.pt";
+
+        private static readonly string[] RequiredRuntimeKeys =
+        {
+            TitleKey,
+            StatusKey,
+            UnavailableKey,
+            LanguageKey,
+            EnglishLabelKey,
+            PortugueseLabelKey
+        };
 
         [SerializeField] private UIDocument document;
         private Locale englishLocale;
@@ -54,10 +65,12 @@ namespace ZeroTrace.Presentation
         private Label languageLabel;
         private Button englishButton;
         private Button portugueseButton;
+        private Coroutine initializationRoutine;
         private bool subscribed;
         private bool handlersRegistered;
         private bool viewBound;
         private bool ready;
+        private bool initializedSuccessfully;
         private string currentLocaleCode;
 
         public bool IsReady => ready;
@@ -67,20 +80,22 @@ namespace ZeroTrace.Presentation
 
         private void OnEnable()
         {
-            SubscribeToLocaleChanges();
-            RegisterButtonHandlers();
-            if (ready)
-            {
-                var activeLocale = LocalizationSettings.SelectedLocale;
-                if (activeLocale != null)
-                {
-                    RenderLocale(activeLocale);
-                }
-            }
+            ready = false;
+            initializationRoutine = StartCoroutine(InitializeOnNextFrame());
         }
 
-        private IEnumerator Start()
+        private IEnumerator InitializeOnNextFrame()
         {
+            // UIDocument creates its visual tree from OnEnable. Wait one frame so
+            // component ordering cannot make the startup view appear unavailable.
+            yield return null;
+
+            if (!isActiveAndEnabled)
+            {
+                initializationRoutine = null;
+                yield break;
+            }
+
             if (document == null)
             {
                 document = GetComponent<UIDocument>();
@@ -88,6 +103,8 @@ namespace ZeroTrace.Presentation
 
             if (!BindView())
             {
+                ShowUnavailable(GetSelectedLocaleCode(), "Startup interface is unavailable.");
+                initializationRoutine = null;
                 yield break;
             }
 
@@ -98,24 +115,41 @@ namespace ZeroTrace.Presentation
 
             if (!HasRequiredAssets())
             {
-                ShowUnavailable("Local language data is unavailable.");
+                ShowUnavailable(GetSelectedLocaleCode(), null);
+                initializationRoutine = null;
                 yield break;
             }
 
-            LocalizationSettings.Instance.SetAvailableLocales(new ResourceLocalesProvider(new[] { englishLocale, portugueseLocale }));
+            var settings = LocalizationSettings.Instance;
+            if (settings == null)
+            {
+                ShowUnavailable(GetSelectedLocaleCode(), null);
+                initializationRoutine = null;
+                yield break;
+            }
+
+            settings.SetAvailableLocales(new ResourceLocalesProvider(new[] { englishLocale, portugueseLocale }));
+
+            // The first successful startup is always English. Re-enabling a
+            // previously initialized controller retains the selected supported locale.
+            var selectedLocale = initializedSuccessfully
+                ? FindSupportedLocale(LocalizationSettings.SelectedLocale?.Identifier.Code) ??
+                  FindSupportedLocale(currentLocaleCode) ?? englishLocale
+                : englishLocale;
+
+            LocalizationSettings.SelectedLocale = selectedLocale;
+            if (!TryRenderLocale(selectedLocale))
+            {
+                ShowUnavailable(selectedLocale.Identifier.Code, null);
+                initializationRoutine = null;
+                yield break;
+            }
+
+            ready = true;
+            initializedSuccessfully = true;
+            RegisterButtonHandlers();
             SubscribeToLocaleChanges();
-            LocalizationSettings.SelectedLocale = englishLocale;
-
-            var deadline = Time.realtimeSinceStartup + 15f;
-            while (!ready && Time.realtimeSinceStartup < deadline)
-            {
-                yield return null;
-            }
-
-            if (!ready)
-            {
-                ShowUnavailable("Local language service could not start.");
-            }
+            initializationRoutine = null;
         }
 
         private bool BindView()
@@ -131,8 +165,9 @@ namespace ZeroTrace.Presentation
             languageLabel = root.Q<Label>("language-label");
             englishButton = root.Q<Button>("language-en");
             portugueseButton = root.Q<Button>("language-pt");
+            viewBound = true;
 
-            if (titleLabel == null || statusLabel == null || languageLabel == null || englishButton == null || portugueseButton == null)
+            if (!HasRequiredControls())
             {
                 return false;
             }
@@ -141,20 +176,29 @@ namespace ZeroTrace.Presentation
             portugueseButton.focusable = true;
             englishButton.tabIndex = 0;
             portugueseButton.tabIndex = 0;
-            viewBound = true;
-            RegisterButtonHandlers();
-            statusLabel.text = "Starting local language data...";
             return true;
         }
+
+        private bool HasRequiredControls() =>
+            titleLabel != null && statusLabel != null && languageLabel != null &&
+            englishButton != null && portugueseButton != null;
 
         private bool HasRequiredAssets() =>
             englishLocale != null && portugueseLocale != null && englishTable != null && portugueseTable != null &&
             string.Equals(englishLocale.Identifier.Code, EnglishCode, StringComparison.Ordinal) &&
-            string.Equals(portugueseLocale.Identifier.Code, PortugueseCode, StringComparison.Ordinal);
+            string.Equals(portugueseLocale.Identifier.Code, PortugueseCode, StringComparison.Ordinal) &&
+            HasRequiredEntries(englishTable) && HasRequiredEntries(portugueseTable);
+
+        private static bool HasRequiredEntries(StringTable table) =>
+            table != null && RequiredRuntimeKeys.All(key =>
+            {
+                var entry = table.GetEntry(key);
+                return entry != null && !string.IsNullOrWhiteSpace(entry.LocalizedValue);
+            });
 
         private void RegisterButtonHandlers()
         {
-            if (!viewBound || handlersRegistered)
+            if (!viewBound || handlersRegistered || !HasRequiredControls())
             {
                 return;
             }
@@ -177,14 +221,22 @@ namespace ZeroTrace.Presentation
                 return;
             }
 
-            englishButton.clicked -= SelectEnglish;
-            portugueseButton.clicked -= SelectPortuguese;
-            englishButton.UnregisterCallback<KeyDownEvent>(HandleEnglishKeyDown);
-            englishButton.UnregisterCallback<FocusInEvent>(HandleEnglishFocusIn);
-            englishButton.UnregisterCallback<FocusOutEvent>(HandleEnglishFocusOut);
-            portugueseButton.UnregisterCallback<KeyDownEvent>(HandlePortugueseKeyDown);
-            portugueseButton.UnregisterCallback<FocusInEvent>(HandlePortugueseFocusIn);
-            portugueseButton.UnregisterCallback<FocusOutEvent>(HandlePortugueseFocusOut);
+            if (englishButton != null)
+            {
+                englishButton.clicked -= SelectEnglish;
+                englishButton.UnregisterCallback<KeyDownEvent>(HandleEnglishKeyDown);
+                englishButton.UnregisterCallback<FocusInEvent>(HandleEnglishFocusIn);
+                englishButton.UnregisterCallback<FocusOutEvent>(HandleEnglishFocusOut);
+            }
+
+            if (portugueseButton != null)
+            {
+                portugueseButton.clicked -= SelectPortuguese;
+                portugueseButton.UnregisterCallback<KeyDownEvent>(HandlePortugueseKeyDown);
+                portugueseButton.UnregisterCallback<FocusInEvent>(HandlePortugueseFocusIn);
+                portugueseButton.UnregisterCallback<FocusOutEvent>(HandlePortugueseFocusOut);
+            }
+
             handlersRegistered = false;
         }
 
@@ -260,7 +312,7 @@ namespace ZeroTrace.Presentation
 
         private void HandleLocaleChanged(Locale locale)
         {
-            if (!isActiveAndEnabled || locale == null)
+            if (!ready || !isActiveAndEnabled || !viewBound || locale == null)
             {
                 return;
             }
@@ -271,22 +323,45 @@ namespace ZeroTrace.Presentation
                 return;
             }
 
-            ready = true;
-            RenderLocale(locale);
+            if (string.Equals(code, currentLocaleCode, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            if (!TryRenderLocale(locale))
+            {
+                ShowUnavailable(code, null);
+            }
         }
 
-        private void RenderLocale(Locale locale)
+        private bool TryRenderLocale(Locale locale)
         {
+            if (!viewBound || !HasRequiredControls() || locale == null)
+            {
+                return false;
+            }
+
             var code = locale.Identifier.Code;
-            var table = code == PortugueseCode ? portugueseTable : englishTable;
-            currentLocaleCode = code;
+            var table = code == PortugueseCode ? portugueseTable : code == EnglishCode ? englishTable : null;
+            if (table == null || !HasRequiredEntries(table))
+            {
+                return false;
+            }
+
+            var englishLabel = ResolveEntry(table, EnglishLabelKey, "English (US)");
+            var portugueseLabel = ResolveEntry(table, PortugueseLabelKey, "Português (Brasil)");
             titleLabel.text = ResolveEntry(table, TitleKey, "ZERO TRACE");
             statusLabel.text = ResolveEntry(table, StatusKey, "Local foundation ready");
-            languageLabel.text = ResolveEntry(table, LanguageKey, "Language");
-            englishButton.text = ResolveEntry(table, EnglishLabelKey, "English (US)");
-            portugueseButton.text = ResolveEntry(table, PortugueseLabelKey, "Português (Brasil)");
+            languageLabel.text = ResolveEntry(table, LanguageKey, code == PortugueseCode ? "Idioma" : "Language") +
+                                 ": " + (code == PortugueseCode ? portugueseLabel : englishLabel);
+            englishButton.text = englishLabel;
+            portugueseButton.text = portugueseLabel;
+            englishButton.SetEnabled(true);
+            portugueseButton.SetEnabled(true);
             englishButton.EnableInClassList("locale-button--selected", code == EnglishCode);
             portugueseButton.EnableInClassList("locale-button--selected", code == PortugueseCode);
+            currentLocaleCode = code;
+            return true;
         }
 
         public static string ResolveEntry(StringTable table, string key, string fallback)
@@ -300,24 +375,87 @@ namespace ZeroTrace.Presentation
             return entry == null || string.IsNullOrWhiteSpace(entry.LocalizedValue) ? fallback : entry.LocalizedValue;
         }
 
-        private void ShowUnavailable(string message)
+        private static Locale FindSupportedLocale(string code)
         {
+            if (string.Equals(code, EnglishCode, StringComparison.Ordinal))
+            {
+                return Resources.Load<Locale>("Localization/Locales/Locale-en-US");
+            }
+
+            return string.Equals(code, PortugueseCode, StringComparison.Ordinal)
+                ? Resources.Load<Locale>("Localization/Locales/Locale-pt-BR")
+                : null;
+        }
+
+        private static string GetSelectedLocaleCode() => LocalizationSettings.SelectedLocale?.Identifier.Code ?? EnglishCode;
+
+        private void ShowUnavailable(string localeCode, string diagnostic)
+        {
+            UnsubscribeFromLocaleChanges();
+            UnregisterButtonHandlers();
             ready = false;
-            statusLabel.text = message;
-            englishButton.SetEnabled(false);
-            portugueseButton.SetEnabled(false);
+            currentLocaleCode = null;
+
+            if (englishButton != null)
+            {
+                englishButton.SetEnabled(false);
+                englishButton.RemoveFromClassList("locale-button--selected");
+            }
+
+            if (portugueseButton != null)
+            {
+                portugueseButton.SetEnabled(false);
+                portugueseButton.RemoveFromClassList("locale-button--selected");
+            }
+
+            if (statusLabel != null)
+            {
+                var table = localeCode == PortugueseCode ? portugueseTable : englishTable;
+                var fallback = localeCode == PortugueseCode
+                    ? "Os dados locais de inicialização estão indisponíveis."
+                    : "Local startup data is unavailable.";
+                statusLabel.text = ResolveEntry(table, UnavailableKey, fallback);
+            }
+            else if (!string.IsNullOrEmpty(diagnostic))
+            {
+                Debug.LogError("[StartupController] " + diagnostic);
+            }
         }
 
         private void OnDisable()
         {
+            if (initializationRoutine != null)
+            {
+                StopCoroutine(initializationRoutine);
+                initializationRoutine = null;
+            }
+
+            ready = false;
             UnsubscribeFromLocaleChanges();
             UnregisterButtonHandlers();
+            viewBound = false;
+            ClearViewReferences();
         }
 
         private void OnDestroy()
         {
+            if (initializationRoutine != null)
+            {
+                StopCoroutine(initializationRoutine);
+                initializationRoutine = null;
+            }
+
             UnsubscribeFromLocaleChanges();
             UnregisterButtonHandlers();
+        }
+
+        private void ClearViewReferences()
+        {
+            titleLabel = null;
+            statusLabel = null;
+            languageLabel = null;
+            englishButton = null;
+            portugueseButton = null;
         }
     }
 }

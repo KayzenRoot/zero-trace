@@ -67,18 +67,22 @@
     font-size: 16px;
 }
 .locale-button--focused {
-    border-top-width: 2px;
-    border-right-width: 2px;
-    border-bottom-width: 2px;
-    border-left-width: 2px;
-    border-color: #B7FF2E;
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-color: #FFFFFF;
 }
 .locale-button--selected {
     background-color: #252D19;
-    border-color: #B7FF2E;
+    border-bottom-width: 4px;
+    border-bottom-color: #A78BFF;
 }
 .locale-button--selected.locale-button--focused {
-    border-color: #B7FF2E;
+    border-top-color: #FFFFFF;
+    border-right-color: #FFFFFF;
+    border-bottom-color: #FFFFFF;
+    border-left-color: #FFFFFF;
 }
 .locale-button:disabled {
     color: #9AA4B1;
