@@ -307,8 +307,22 @@
     "docs/Decisions.md": "d80a4b6c26630d9f537a06ecd86879fbace93dbf",
     "docs/work-orders/D01/ZT-D01-WO-001-QA-01.md": "eea2f7802d1d441be45a1566d9ccaa2a6b30c877",
     "docs/work-orders/D01/QA-01-codex-prompt.md": "18bf17037663f1c0a0d9ad35f0e273bcd9a272ea",
-    "docs/evidence/ZT-D01-WO-001-QA-01/adr-011-project-bootstrap-authorization-2026-11-26.md": "0275fc465280fb5547005e063a095b294841ae86",
+    "docs/evidence/ZT-D01-WO-001-QA-01/adr-011-project-bootstrap-authorization-2026-11-26.md": "19dcdece292beb9a3bee089072183957cd3126e2",
     "docs/evidence/ZT-D01-WO-001-QA-01/checkpoint-delta-unpromoted-preflight-2026-11-26.md": "3b53440f17e1b8d70b71d8597b79b50290f04c3a"
   },
-  "latest_pr_head_before_lock_update": "5685cbff07f25d4a7c226e05091f87fe94a0f19b"
+  "latest_pr_head_before_lock_update": "5685cbff07f25d4a7c226e05091f87fe94a0f19b",
+  "last_verified_head_before_lock_refresh": "a39876020c1b2cc37eb4a4f68e9506b8f2f3863c",
+  "latest_exact_head_audit": {
+    "head": "a39876020c1b2cc37eb4a4f68e9506b8f2f3863c",
+    "base": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
+    "checks": {
+      "docs_validation": "SUCCESS",
+      "socket_project_report": "SUCCESS",
+      "socket_pr_alerts": "SUCCESS"
+    },
+    "check_count": "3/3",
+    "project_paths_changed": 0,
+    "pr_state": "OPEN_DRAFT",
+    "merged": false
+  }
 }
