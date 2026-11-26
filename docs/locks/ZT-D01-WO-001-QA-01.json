@@ -312,16 +312,16 @@
     "docs/work-orders/ZT-D01-WO-001.md": "2dc56bbad51d127159c277236ece962551e1ec78"
   },
   "latest_pr_head_before_lock_update": "5685cbff07f25d4a7c226e05091f87fe94a0f19b",
-  "last_verified_head_before_lock_refresh": "9f129eb295df10d0403a418337771208aac56405",
+  "last_verified_head_before_lock_refresh": "84d4f8beac27ba9108fee72a090264990403a13f",
   "latest_exact_head_audit": {
-    "head": "a39876020c1b2cc37eb4a4f68e9506b8f2f3863c",
+    "head": "84d4f8beac27ba9108fee72a090264990403a13f",
     "base": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
     "checks": {
       "docs_validation": "SUCCESS",
       "socket_project_report": "SUCCESS",
-      "socket_pr_alerts": "SUCCESS"
+      "socket_pr_alerts": "NOT_PRESENT_ON_THIS_HEAD"
     },
-    "check_count": "3/3",
+    "check_count": "2 successful check-runs; required docs-validation PASS",
     "project_paths_changed": 0,
     "pr_state": "OPEN_DRAFT",
     "merged": false
