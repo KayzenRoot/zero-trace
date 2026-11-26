@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Localization;
@@ -18,8 +19,18 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
         private sealed class MemoryProgressStore : ILocalPrototypeProgressStore
         {
             private LocalPrototypeProgress value = new LocalPrototypeProgress();
+            public bool FailNextSave;
             public LocalPrototypeProgress Load() => value.Copy();
-            public void Save(LocalPrototypeProgress progress) => value = progress.Copy();
+            public void Save(LocalPrototypeProgress progress)
+            {
+                if (FailNextSave)
+                {
+                    FailNextSave = false;
+                    throw new LocalPrototypePersistenceException("Synthetic save failure.");
+                }
+
+                value = progress.Copy();
+            }
         }
 
         private StartupController startup;
@@ -196,6 +207,150 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
             Assert.That(content.Q<Label>("prototype-exercise-prompt").text, Does.Contain("select the recovery index"));
             Assert.That(LocalPrototypeText.Get("correct", "pt-BR"), Does.Contain("Correto"));
             Assert.That(LocalPrototypeText.Get("correct", "en-US"), Does.Contain("Correct"));
+        }
+
+        [UnityTest]
+        public IEnumerator RoomWallsBlockEscapeAndRecoveryReturnsSafelyBeforeInteraction()
+        {
+            controller.SetProgressStoreForSession(new MemoryProgressStore());
+            Assert.That(controller.StartPrototype(), Is.True);
+
+            var roomRoot = GameObject.Find("ZERO TRACE Local Prototype Room");
+            Assert.That(roomRoot, Is.Not.Null);
+            var frontWall = roomRoot.transform.Find("Front Wall (Negative Z)");
+            Assert.That(frontWall, Is.Not.Null);
+            Assert.That(frontWall.GetComponent<BoxCollider>(), Is.Not.Null);
+
+            var motor = UnityEngine.Object.FindFirstObjectByType<LocalPrototypePlayerMotor>();
+            var characterController = motor.GetComponent<CharacterController>();
+            motor.SetControlsEnabled(false);
+
+            Assert.That(MoveAndReadPosition(motor.transform, characterController,
+                new Vector3(2.2f, 0f, -2.4f), Vector3.forward * 0.25f).z, Is.GreaterThan(-2.4f));
+            Assert.That(MoveAndReadPosition(motor.transform, characterController,
+                new Vector3(3.2f, 0f, -2.4f), Vector3.right * 2f).x, Is.LessThan(3.8f));
+            Assert.That(MoveAndReadPosition(motor.transform, characterController,
+                new Vector3(-3.2f, 0f, -2.4f), Vector3.left * 2f).x, Is.GreaterThan(-3.8f));
+            Assert.That(MoveAndReadPosition(motor.transform, characterController,
+                new Vector3(3.2f, 0f, 3.2f), Vector3.forward * 2f).z, Is.LessThan(3.8f));
+            Assert.That(MoveAndReadPosition(motor.transform, characterController,
+                new Vector3(3.2f, 0f, -3.2f), Vector3.back * 2f).z, Is.GreaterThan(-3.8f));
+
+            motor.SetControlsEnabled(true);
+            SetPlayerPosition(motor.transform, characterController, new Vector3(0f, -20f, -2.4f));
+            typeof(LocalPrototypePlayerMotor).GetField("verticalSpeed", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(motor, -42f);
+
+            Assert.That(motor.RecoverIfOutsideRoom(), Is.True);
+            Assert.That(motor.transform.position, Is.EqualTo(new Vector3(0f, 0f, -2.4f)));
+            Assert.That(typeof(LocalPrototypePlayerMotor).GetField("verticalSpeed", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(motor), Is.EqualTo(0f));
+            Assert.That(motor.RecoveredThisFrame, Is.True);
+            Assert.That(controller.InteractWithComputer(), Is.False);
+            Assert.That(controller.ComputerState, Is.EqualTo(LocalComputerState.Off));
+
+            yield return null;
+            Assert.That(controller.IsLookingAtComputer, Is.True);
+            Assert.That(controller.InteractWithComputer(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.ComputerState, Is.EqualTo(LocalComputerState.Ready));
+        }
+
+        [UnityTest]
+        public IEnumerator FileSelectionVisualsStaySynchronizedAcrossAppLifecycleAndLocale()
+        {
+            controller.SetProgressStoreForSession(new MemoryProgressStore());
+            Assert.That(controller.StartPrototype(), Is.True);
+            Assert.That(controller.BeginComputerBootForInteraction(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.OpenApp("files"), Is.True);
+
+            var content = startup.Document.rootVisualElement.Q<VisualElement>("null-os-app-content");
+            var briefing = content.Q<Button>("prototype-file-briefing");
+            var recovery = content.Q<Button>("prototype-file-recovery_manifest");
+            var shift = content.Q<Button>("prototype-file-shift_note");
+            controller.SelectSyntheticFile("shift_note");
+            Assert.That(shift.ClassListContains("prototype-file-selected"), Is.True);
+            Assert.That(shift.text, Does.StartWith("✓  "));
+
+            controller.SelectSyntheticFile("briefing");
+            Assert.That(shift.ClassListContains("prototype-file-selected"), Is.False);
+            Assert.That(shift.text, Does.Not.StartWith("✓  "));
+            Assert.That(briefing.ClassListContains("prototype-file-selected"), Is.True);
+            Assert.That(content.Q<Label>("prototype-selected-file").text, Does.Contain("briefing.txt"));
+
+            Assert.That(controller.CloseActiveApp(), Is.True);
+            Assert.That(controller.OpenApp("files"), Is.True);
+            content = startup.Document.rootVisualElement.Q<VisualElement>("null-os-app-content");
+            Assert.That(content.Q<Label>("prototype-selected-file").text, Is.EqualTo("No file selected."));
+            Assert.That(content.Q<Button>("prototype-file-briefing").ClassListContains("prototype-file-selected"), Is.False);
+
+            controller.SelectSyntheticFile(LocalPrototypeFlow.RequiredSyntheticFileId);
+            recovery = content.Q<Button>("prototype-file-recovery_manifest");
+            Assert.That(recovery.ClassListContains("prototype-file-selected"), Is.True);
+            var portuguese = Resources.Load<Locale>("Localization/Locales/Locale-pt-BR");
+            LocalizationSettings.SelectedLocale = portuguese;
+            yield return WaitForLocale("pt-BR");
+
+            content = startup.Document.rootVisualElement.Q<VisualElement>("null-os-app-content");
+            recovery = content.Q<Button>("prototype-file-recovery_manifest");
+            Assert.That(recovery.ClassListContains("prototype-file-selected"), Is.True);
+            Assert.That(recovery.text, Does.StartWith("✓  "));
+            Assert.That(content.Q<Label>("prototype-selected-file").text, Does.Contain("recovery_manifest.txt"));
+            Assert.That(content.Q<Label>("prototype-selected-file").text, Does.StartWith("Selecionado:"));
+
+            Assert.That(controller.RestartExercise(), Is.True);
+            content = startup.Document.rootVisualElement.Q<VisualElement>("null-os-app-content");
+            Assert.That(content.Q<Label>("prototype-selected-file").text, Is.EqualTo("Nenhum arquivo selecionado."));
+            Assert.That(content.Q<Button>("prototype-file-recovery_manifest").ClassListContains("prototype-file-selected"), Is.False);
+            Assert.That(controller.SubmitExerciseSelection(), Is.EqualTo(ExerciseSubmissionResult.InvalidSelection));
+            Assert.That(controller.ExerciseAttemptCount, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator SaveFailureIsLocalizedAndRetryCommitsProgress()
+        {
+            var store = new MemoryProgressStore();
+            controller.SetProgressStoreForSession(store);
+            Assert.That(controller.StartPrototype(), Is.True);
+            Assert.That(controller.BeginComputerBootForInteraction(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.OpenApp("files"), Is.True);
+            controller.SelectSyntheticFile(LocalPrototypeFlow.RequiredSyntheticFileId);
+
+            store.FailNextSave = true;
+            Assert.That(controller.SubmitExerciseSelection(), Is.EqualTo(ExerciseSubmissionResult.PersistenceFailed));
+            Assert.That(controller.LastExerciseResultText, Does.Contain("Progress was not saved"));
+            Assert.That(controller.ExerciseComplete, Is.False);
+            Assert.That(controller.ExerciseAttemptCount, Is.Zero);
+
+            store.FailNextSave = true;
+            var portuguese = Resources.Load<Locale>("Localization/Locales/Locale-pt-BR");
+            LocalizationSettings.SelectedLocale = portuguese;
+            yield return WaitForLocale("pt-BR");
+            Assert.That(controller.SubmitExerciseSelection(), Is.EqualTo(ExerciseSubmissionResult.PersistenceFailed));
+            Assert.That(controller.LastExerciseResultText, Does.Contain("O progresso não foi salvo"));
+            Assert.That(controller.ExerciseAttemptCount, Is.Zero);
+
+            Assert.That(controller.SubmitExerciseSelection(), Is.EqualTo(ExerciseSubmissionResult.Correct));
+            Assert.That(controller.ExerciseComplete, Is.True);
+            Assert.That(controller.ExerciseAttemptCount, Is.EqualTo(1));
+        }
+
+        private static Vector3 MoveAndReadPosition(Transform player, CharacterController characterController,
+            Vector3 start, Vector3 movement)
+        {
+            SetPlayerPosition(player, characterController, start);
+            characterController.Move(movement);
+            return player.position;
+        }
+
+        private static void SetPlayerPosition(Transform player, CharacterController characterController, Vector3 position)
+        {
+            characterController.enabled = false;
+            player.position = position;
+            characterController.enabled = true;
+            Physics.SyncTransforms();
         }
 
         private IEnumerator WaitForComputerReady()

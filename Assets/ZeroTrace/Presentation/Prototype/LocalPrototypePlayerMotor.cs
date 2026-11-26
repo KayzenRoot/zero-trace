@@ -9,15 +9,38 @@ namespace ZeroTrace.Presentation
         private bool controlsEnabled;
         private float pitch;
         private float verticalSpeed;
+        private Bounds playableBounds;
+        private Vector3 safePosition;
+        private int recoveredFrame = -1;
 
         public bool ControlsEnabled => controlsEnabled;
         public Transform View => view;
+        public bool RecoveredThisFrame => recoveredFrame == Time.frameCount;
 
-        public void Configure(CharacterController controller, Transform cameraTransform)
+        public void Configure(CharacterController controller, Transform cameraTransform, Bounds roomBounds, Vector3 safeSpawn)
         {
             characterController = controller;
             view = cameraTransform;
+            playableBounds = roomBounds;
+            safePosition = safeSpawn;
             pitch = 0f;
+            verticalSpeed = 0f;
+        }
+
+        public bool RecoverIfOutsideRoom()
+        {
+            if (characterController == null || !characterController.enabled || playableBounds.Contains(transform.position))
+            {
+                return false;
+            }
+
+            characterController.enabled = false;
+            transform.position = safePosition;
+            characterController.enabled = true;
+            verticalSpeed = 0f;
+            Physics.SyncTransforms();
+            recoveredFrame = Time.frameCount;
+            return true;
         }
 
         public void SetControlsEnabled(bool enabled)
@@ -37,7 +60,7 @@ namespace ZeroTrace.Presentation
 
         private void Update()
         {
-            if (!controlsEnabled || characterController == null || view == null)
+            if (characterController == null || RecoverIfOutsideRoom() || !controlsEnabled || view == null)
             {
                 return;
             }
@@ -59,6 +82,7 @@ namespace ZeroTrace.Presentation
                 ? -1.5f
                 : verticalSpeed - 18f * Time.deltaTime;
             characterController.Move((movement * 2.4f + Vector3.up * verticalSpeed) * Time.deltaTime);
+            RecoverIfOutsideRoom();
         }
 
         private void OnDisable()

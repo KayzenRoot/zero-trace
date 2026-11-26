@@ -48,6 +48,8 @@ namespace ZeroTrace.Presentation
                 new Vector3(8f, 0.24f, 8f), Carbon, true);
             CreateCube(room.Root.transform, "Back Wall", new Vector3(0f, 1.5f, 4.15f),
                 new Vector3(8f, 3f, 0.25f), Obsidian, true);
+            CreateCube(room.Root.transform, "Front Wall (Negative Z)", new Vector3(0f, 1.5f, -3.9f),
+                new Vector3(8f, 3f, 0.25f), Obsidian, true);
             CreateCube(room.Root.transform, "Left Wall", new Vector3(-4.05f, 1.5f, 0.2f),
                 new Vector3(0.25f, 3f, 8f), Carbon, true);
             CreateCube(room.Root.transform, "Right Wall", new Vector3(4.05f, 1.5f, 0.2f),
@@ -81,7 +83,8 @@ namespace ZeroTrace.Presentation
             room.Player = player;
             room.ComputerCollider = computer;
             room.Motor = player.AddComponent<LocalPrototypePlayerMotor>();
-            room.Motor.Configure(characterController, camera.transform);
+            var playableBounds = new Bounds(new Vector3(0f, 0.7f, 0.25f), new Vector3(7.2f, 2.4f, 6.8f));
+            room.Motor.Configure(characterController, camera.transform, playableBounds, player.transform.position);
 
             Physics.SyncTransforms();
             return room;

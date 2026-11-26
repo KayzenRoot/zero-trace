@@ -8,8 +8,20 @@ namespace ZeroTrace.Domain.Tests
         private sealed class MemoryProgressStore : ILocalPrototypeProgressStore
         {
             public LocalPrototypeProgress Value = new LocalPrototypeProgress();
+            public int SaveCount;
+            public bool FailNextSave;
             public LocalPrototypeProgress Load() => Value.Copy();
-            public void Save(LocalPrototypeProgress progress) => Value = progress.Copy();
+            public void Save(LocalPrototypeProgress progress)
+            {
+                SaveCount++;
+                if (FailNextSave)
+                {
+                    FailNextSave = false;
+                    throw new LocalPrototypePersistenceException("Synthetic save failure.");
+                }
+
+                Value = progress.Copy();
+            }
         }
 
         [Test]
@@ -87,6 +99,87 @@ namespace ZeroTrace.Domain.Tests
             Assert.That(flow.ExerciseComplete, Is.False);
             Assert.That(flow.AttemptCount, Is.Zero);
             Assert.That(new LocalPrototypeFlow(store).AttemptCount, Is.Zero);
+        }
+
+        [Test]
+        public void InvalidSyntheticFileIdsDoNotChangeOrPersistProgress()
+        {
+            var store = new MemoryProgressStore();
+            var flow = ReadyFileManager(store);
+
+            Assert.That(flow.SubmitExerciseFile(null), Is.EqualTo(ExerciseSubmissionResult.InvalidSelection));
+            Assert.That(flow.SubmitExerciseFile(string.Empty), Is.EqualTo(ExerciseSubmissionResult.InvalidSelection));
+            Assert.That(flow.SubmitExerciseFile("unknown_file"), Is.EqualTo(ExerciseSubmissionResult.InvalidSelection));
+
+            Assert.That(flow.AttemptCount, Is.Zero);
+            Assert.That(flow.ExerciseComplete, Is.False);
+            Assert.That(flow.LastExerciseFileId, Is.Null);
+            Assert.That(store.SaveCount, Is.Zero);
+        }
+
+        [Test]
+        public void FailedSubmissionSavePreservesConfirmedStateAndCanRetry()
+        {
+            var store = new MemoryProgressStore
+            {
+                Value = new LocalPrototypeProgress { attemptCount = 2 },
+                FailNextSave = true
+            };
+            var flow = ReadyFileManager(store);
+
+            Assert.That(flow.SubmitExerciseFile(LocalPrototypeFlow.RequiredSyntheticFileId),
+                Is.EqualTo(ExerciseSubmissionResult.PersistenceFailed));
+            Assert.That(flow.ExerciseComplete, Is.False);
+            Assert.That(flow.AttemptCount, Is.EqualTo(2));
+            Assert.That(flow.LastExerciseFileId, Is.Null);
+            Assert.That(flow.LastPersistenceFailed, Is.True);
+            Assert.That(store.Value.attemptCount, Is.EqualTo(2));
+
+            Assert.That(flow.SubmitExerciseFile(LocalPrototypeFlow.RequiredSyntheticFileId),
+                Is.EqualTo(ExerciseSubmissionResult.Correct));
+            Assert.That(flow.ExerciseComplete, Is.True);
+            Assert.That(flow.AttemptCount, Is.EqualTo(3));
+            Assert.That(flow.LastPersistenceFailed, Is.False);
+        }
+
+        [Test]
+        public void FailedRestartPreservesCompletedProgressAndCanRetry()
+        {
+            var store = new MemoryProgressStore
+            {
+                Value = new LocalPrototypeProgress { exerciseComplete = true, attemptCount = 3 }
+            };
+            var flow = ReadyFileManager(store);
+            store.FailNextSave = true;
+
+            Assert.That(flow.RestartExercise(), Is.False);
+            Assert.That(flow.ExerciseComplete, Is.True);
+            Assert.That(flow.AttemptCount, Is.EqualTo(3));
+            Assert.That(flow.ActiveApp, Is.EqualTo(LocalPrototypeApp.FileManager));
+            Assert.That(store.Value.exerciseComplete, Is.True);
+            Assert.That(store.Value.attemptCount, Is.EqualTo(3));
+            Assert.That(flow.LastPersistenceFailed, Is.True);
+
+            Assert.That(flow.RestartExercise(), Is.True);
+            Assert.That(flow.ExerciseComplete, Is.False);
+            Assert.That(flow.AttemptCount, Is.Zero);
+            Assert.That(flow.LastPersistenceFailed, Is.False);
+        }
+
+        [Test]
+        public void AttemptCounterDoesNotOverflow()
+        {
+            var store = new MemoryProgressStore
+            {
+                Value = new LocalPrototypeProgress { attemptCount = int.MaxValue }
+            };
+            var flow = ReadyFileManager(store);
+            var saveCount = store.SaveCount;
+
+            Assert.That(flow.SubmitExerciseFile("briefing"), Is.EqualTo(ExerciseSubmissionResult.AttemptLimitReached));
+            Assert.That(flow.AttemptCount, Is.EqualTo(int.MaxValue));
+            Assert.That(flow.ExerciseComplete, Is.False);
+            Assert.That(store.SaveCount, Is.EqualTo(saveCount));
         }
 
         private static LocalPrototypeFlow ReadyFileManager(ILocalPrototypeProgressStore store)

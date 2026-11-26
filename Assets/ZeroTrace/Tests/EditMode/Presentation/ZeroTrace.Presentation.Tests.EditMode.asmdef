@@ -1,7 +1,7 @@
 {
   "name": "ZeroTrace.Presentation.Tests.EditMode",
   "rootNamespace": "ZeroTrace.Presentation.Tests.EditMode",
-  "references": ["ZeroTrace.Presentation", "Unity.Localization"],
+  "references": ["ZeroTrace.Presentation", "ZeroTrace.Domain", "Unity.Localization"],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

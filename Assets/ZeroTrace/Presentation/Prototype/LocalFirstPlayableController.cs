@@ -134,6 +134,13 @@ namespace ZeroTrace.Presentation
 
         public bool InteractWithComputer()
         {
+            if (room != null && room.Motor != null &&
+                (room.Motor.RecoverIfOutsideRoom() || room.Motor.RecoveredThisFrame))
+            {
+                RenderRoomStatus();
+                return false;
+            }
+
             if (!prototypeRunning || flow == null || !IsComputerInView() ||
                 (flow.ComputerState != LocalComputerState.Off && flow.ComputerState != LocalComputerState.Shutdown))
             {
@@ -225,6 +232,7 @@ namespace ZeroTrace.Presentation
             }
 
             selectedFileId = fileId;
+            SyncFileSelectionVisuals();
             if (selectedFileLabel != null)
             {
                 selectedFileLabel.text = string.IsNullOrEmpty(fileId)
@@ -246,6 +254,10 @@ namespace ZeroTrace.Presentation
                 exerciseResult.text = result == ExerciseSubmissionResult.Correct ? Text("correct")
                     : result == ExerciseSubmissionResult.AlreadyComplete ? Text("alreadyComplete")
                     : result == ExerciseSubmissionResult.Incorrect ? Text("incorrect")
+                    : result == ExerciseSubmissionResult.InvalidSelection
+                        ? string.IsNullOrWhiteSpace(selectedFileId) ? Text("notSelected") : Text("invalidSelection")
+                    : result == ExerciseSubmissionResult.AttemptLimitReached ? Text("attemptLimit")
+                    : result == ExerciseSubmissionResult.PersistenceFailed ? Text("saveFailed")
                     : Text("notSelected");
             }
 
@@ -255,8 +267,18 @@ namespace ZeroTrace.Presentation
 
         public bool RestartExercise()
         {
-            if (flow == null || !flow.RestartExercise())
+            if (flow == null)
             {
+                return false;
+            }
+
+            if (!flow.RestartExercise())
+            {
+                if (flow.LastPersistenceFailed && exerciseResult != null)
+                {
+                    exerciseResult.text = Text("saveFailed");
+                }
+
                 return false;
             }
 
@@ -546,14 +568,47 @@ namespace ZeroTrace.Presentation
         private void AddFileButton(string id, string textKey)
         {
             var button = CreateButton(Text(textKey), () => SelectSyntheticFile(id), false);
+            button.name = "prototype-file-" + id;
+            button.userData = textKey;
             button.style.alignSelf = Align.FlexStart;
             button.style.minWidth = 280;
-            if (selectedFileId == id)
+            button.style.borderLeftWidth = 0;
+            appContent.Add(button);
+            SyncFileSelectionVisuals();
+        }
+
+        private void SyncFileSelectionVisuals()
+        {
+            if (appContent == null)
             {
-                button.text = "✓  " + Text(textKey);
+                return;
             }
 
-            appContent.Add(button);
+            foreach (var element in appContent.Children())
+            {
+                var button = element as Button;
+                if (button == null || string.IsNullOrEmpty(button.name) ||
+                    !button.name.StartsWith("prototype-file-", System.StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var fileId = button.name.Substring("prototype-file-".Length);
+                var textKey = button.userData as string;
+                var selected = string.Equals(selectedFileId, fileId, System.StringComparison.Ordinal);
+                button.text = (selected ? "✓  " : string.Empty) + Text(textKey);
+                button.style.borderLeftWidth = selected ? 4 : 0;
+                button.style.borderLeftColor = selected ? Lime : Carbon;
+                button.style.backgroundColor = selected ? (Color)new Color32(36, 55, 46, 255) : Carbon;
+                if (selected)
+                {
+                    button.AddToClassList("prototype-file-selected");
+                }
+                else
+                {
+                    button.RemoveFromClassList("prototype-file-selected");
+                }
+            }
         }
 
         private void RefreshExerciseStatus()
@@ -613,6 +668,13 @@ namespace ZeroTrace.Presentation
         {
             if (!prototypeRunning)
             {
+                return;
+            }
+
+            if (room != null && room.Motor != null &&
+                (room.Motor.RecoverIfOutsideRoom() || room.Motor.RecoveredThisFrame))
+            {
+                RenderRoomStatus();
                 return;
             }
 

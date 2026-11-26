@@ -21,9 +21,20 @@ namespace ZeroTrace.Domain
     public enum ExerciseSubmissionResult
     {
         Unavailable,
+        InvalidSelection,
+        AttemptLimitReached,
+        PersistenceFailed,
         Incorrect,
         Correct,
         AlreadyComplete
+    }
+
+    public sealed class LocalPrototypePersistenceException : Exception
+    {
+        public LocalPrototypePersistenceException(string message, Exception innerException = null)
+            : base(message, innerException)
+        {
+        }
     }
 
     [Serializable]
@@ -58,6 +69,7 @@ namespace ZeroTrace.Domain
         public bool ExerciseComplete => progress.exerciseComplete;
         public int AttemptCount => progress.attemptCount;
         public string LastExerciseFileId { get; private set; }
+        public bool LastPersistenceFailed { get; private set; }
 
         public LocalPrototypeFlow(ILocalPrototypeProgressStore progressStore)
         {
@@ -132,20 +144,36 @@ namespace ZeroTrace.Domain
                 return ExerciseSubmissionResult.Unavailable;
             }
 
+            if (!IsKnownSyntheticFile(syntheticFileId))
+            {
+                return ExerciseSubmissionResult.InvalidSelection;
+            }
+
             if (progress.exerciseComplete)
             {
                 return ExerciseSubmissionResult.AlreadyComplete;
             }
 
-            progress.attemptCount++;
-            LastExerciseFileId = syntheticFileId;
+            if (progress.attemptCount == int.MaxValue)
+            {
+                return ExerciseSubmissionResult.AttemptLimitReached;
+            }
+
+            var candidate = progress.Copy();
+            candidate.attemptCount++;
             var correct = string.Equals(syntheticFileId, RequiredSyntheticFileId, StringComparison.Ordinal);
             if (correct)
             {
-                progress.exerciseComplete = true;
+                candidate.exerciseComplete = true;
             }
 
-            progressStore.Save(progress.Copy());
+            if (!TrySave(candidate))
+            {
+                return ExerciseSubmissionResult.PersistenceFailed;
+            }
+
+            progress = candidate;
+            LastExerciseFileId = syntheticFileId;
             return correct ? ExerciseSubmissionResult.Correct : ExerciseSubmissionResult.Incorrect;
         }
 
@@ -156,11 +184,38 @@ namespace ZeroTrace.Domain
                 return false;
             }
 
-            progress = new LocalPrototypeProgress();
-            progressStore.Save(progress.Copy());
+            var candidate = new LocalPrototypeProgress();
+            if (!TrySave(candidate))
+            {
+                return false;
+            }
+
+            progress = candidate;
             LastExerciseFileId = null;
             ActiveApp = LocalPrototypeApp.FileManager;
             return true;
+        }
+
+        private bool TrySave(LocalPrototypeProgress candidate)
+        {
+            try
+            {
+                progressStore.Save(candidate.Copy());
+                LastPersistenceFailed = false;
+                return true;
+            }
+            catch (LocalPrototypePersistenceException)
+            {
+                LastPersistenceFailed = true;
+                return false;
+            }
+        }
+
+        private static bool IsKnownSyntheticFile(string syntheticFileId)
+        {
+            return string.Equals(syntheticFileId, "briefing", StringComparison.Ordinal) ||
+                   string.Equals(syntheticFileId, RequiredSyntheticFileId, StringComparison.Ordinal) ||
+                   string.Equals(syntheticFileId, "shift_note", StringComparison.Ordinal);
         }
     }
 }
