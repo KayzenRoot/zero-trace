@@ -250,7 +250,7 @@
     "luna_6": "bounded configuration, deterministic test/build execution after all gates pass"
   },
   "stop": "STALE if main or any critical fingerprint changes. No account/org creation, service activation, credential, webhook, billing, cloud build or implementation until explicit owner instruction and every preflight gate passes. D01 incomplete; D02/release blocked.",
-  "pr": 29,
+  "pr": 28,
   "planning_audit_snapshot_sha": "d93960db537d48ca2ab297e8c21c77771d1c5047",
   "owner_authorization": {
     "received": "2026-11-26",
@@ -273,5 +273,7 @@
     "planning_pr_29_merge_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
     "post_merge_docs_validation": "SUCCESS",
     "post_merge_socket_project_report": "SUCCESS"
-  }
+  },
+  "execution_pr": 28,
+  "execution_pr_state": "DRAFT_OPEN"
 }
