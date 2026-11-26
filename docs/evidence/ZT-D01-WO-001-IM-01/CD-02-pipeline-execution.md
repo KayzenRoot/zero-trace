@@ -1,6 +1,6 @@
 # ZT-D01-WO-001-IM-01/CD-02 — qualificação parcial do Unity Pipeline
 
-**Resultado: BLOCKED, com precondições atualizadas após a auditoria da PR.** A documentação oficial qualifica G-PIP-01 para uma única tentativa local, condicionada à contenção da sessão e à confirmação na UI oficial de que não há licença separada, trial, compra ou cobrança. O proprietário informou que entrou novamente no Hub sem trial ou cobrança, mas a atualização de licenças continua pendente. Após o login, a janela normal do Editor reapareceu; antes disso, ele mostrou “License returned”, cujo aviso foi dispensado. Nenhuma dessas telas confirma a licença utilizável. O pacote segue não resolvido e F02–F04 e os gates licenciados restantes não foram executados. Não há adoção técnica nem checkpoint promovido.
+**Estado histórico desta evidência antes da retomada de 25/11/2026: BLOCKED.** As observações e conclusões anteriores foram preservadas. A seção final “Retomada CD-02 — 25/11/2026” registra a renovação informada pelo proprietário, a resolução real do pacote, os ajustes feitos e os bloqueios atuais; ela substitui os estados anteriores apenas para os fatos que revalidou.
 
 ## Identificação e preservação
 
@@ -118,3 +118,102 @@ Validações a executar no commit desta evidência: `.github/scripts/validate_do
 | AC08 — escopo, custo e segurança | BLOCKED; nenhum custo ou instalação nesta retomada, mas a revogação/contenção completa da sessão não está comprovada |
 
 **Conclusão do executor: BLOCKED.** A continuidade técnica requer que a atualização da licença Personal termine sem trial/cobrança e que o Editor oficial abra em estado licenciado. Não repetir refresh, instalação ou tentativas de conexão enquanto isso não ocorrer. Após a licença, fazer uma única inspeção pelo Package Manager; cancelar se houver pagamento, trial separado ou downgrade não autorizado, e seguir somente a alternativa manual autorizada pela ADR-010 se a integração não qualificar. Nenhuma aceitação de termos, ativação de licença, revogação externa ou contato com suporte foi realizada nesta retomada.
+
+## Retomada CD-02 — 25/11/2026
+
+### Estado, base e preservação
+
+- Repositório `KayzenRoot/zero-trace`, issue #24, PR #25 aberta em draft, branch `wo/zt-d01-wo-001-im-01`, base `main`.
+- Base fixada: `a907ae071aad6cec7f2b1bca0b111d7272527601`. HEAD remoto/local verificado antes desta retomada: `0c513388cbb8ef2bc85cd7cbf77a93b77db812ea`.
+- O SHA e os checks do commit que publica esta seção são verificáveis no histórico e no painel da PR #25; não se atribui a este texto um hash autorreferente.
+- Context Lock r2, lock histórico, ADR-009, ADR-010, `docs/Checkpoint.md` e fontes canônicas não foram alterados. Nenhum arquivo de credencial, log bruto, segredo, identificador pessoal ou token foi consultado ou incluído nesta retomada. O registro histórico do incidente permanece; não há prova de revogação remota e ela não é presumida.
+
+### Source Check fresco
+
+`git fetch --prune origin` confirmou branch local e remota no mesmo HEAD e `origin/main` igual à base do lock. O cálculo direto dos IDs de blob do Git, sem filtros de checkout, e a comparação dos SHA-256 retornaram:
+
+- 28/28 blobs da base main;
+- 30/30 blobs do snapshot histórico de planejamento;
+- 87/87 fingerprints brutos no snapshot r2 e 87/87 no HEAD auditado;
+- 2/2 SHA-256 das fontes canônicas.
+
+Não houve divergência. Esta verificação antecedeu somente as três alterações Unity listadas nesta evidência; os documentos governados e os Context Locks não foram modificados.
+
+### Source Check reexecutado para esta publicação
+
+A auditoria humana mais recente consultada na PR #25 é de 2026-11-25T22:04:52Z, disposition `BLOCKED / CORRECTION REQUIRED`, auditando o HEAD `56a1b3cf44ca78da5ba8d0ea47804b6c09714a49`. Após essa auditoria, revalidei o Source Check antes da publicação, com a branch e o remoto alinhados em `0c513388cbb8ef2bc85cd7cbf77a93b77db812ea` e `origin/main` em `a907ae071aad6cec7f2b1bca0b111d7272527601`:
+
+- Base `main`: 28/28 blobs conferem com o mapa do lock.
+- Snapshot de planejamento histórico: 30/30 blobs conferem no snapshot; 29/30 no HEAD atual. A única diferença é `.gitattributes`, cujo blob atual `77aed40d5ff7c519099149676d2591e04f4ae85f` é o valor expressamente autorizado por `authorized_prior_delta` no lock r2.
+- Snapshot de alteração r2 `c29902ea768bafaf4431b7ea95500d0aec8a89ec`: 87/87 blobs conferem no snapshot e 87/87 no HEAD auditado.
+- Fontes canônicas: 2/2 SHA-256 conferem. O blob do Context Lock histórico permanece `1662754980fe92f7ebaad51dada80c86778c3c10`; o lock r2 segue sem alteração.
+
+Esta comparação refere-se aos commits publicados antes do novo commit de evidência. As alterações locais de pacote e Player Settings já listadas nesta execução permanecem dentro do delta autorizado e não alteram as fontes canônicas.
+
+### Licença, processo e integração local
+
+O proprietário informou renovação manual da licença Unity Personal no Hub 4.0.2 e ativação em 25/11/2026. Isso é evidência do proprietário, não leitura de conta. Com o Editor 6000.3.29f1 existente em D:, `unity open ... --until-ready --timeout 300` terminou com código 0 e estado `ready` em 19 segundos. `unity status` também retornou sucesso e estado `ready`; não apareceu bloqueio de licença na inicialização. Não foram lidos logs de licença nem arquivos de credenciais.
+
+`unity editors running --json` reportou uma única instância de Editor para o projeto. Na árvore de processos havia dois workers de importação associados à instância, não duas janelas adicionais; não foi aberta uma segunda instância licenciada. O Editor permanece aberto após a recompilação.
+
+A documentação oficial diz que o Unity Pipeline atende somente em loopback `127.0.0.1`, exige token válido para comandos e não habilita Player Runtime por padrão ([segurança do Unity CLI e Pipeline](https://docs.unity.com/en-us/unity-cli/unity-cli-security)). A CLI reportou servidor alcançável em `127.0.0.1:7800`; `unity status` e `unity recompile` conseguiram consultar/controlar o Editor com sucesso. Como a Unity documenta que comandos sem token válido são rejeitados, o sucesso dessas chamadas é evidência da autenticação local ativa; o valor do token não foi lido. Nenhum endereço externo, token ou conteúdo do arquivo de token foi lido ou publicado. A CLI é 1.0.1; a interface de comandos disponíveis do Editor não produziu manifesto válido nesta execução, então nenhum comando arbitrário foi enviado.
+
+### G-PIP-01/G-PIP-02 — preço, compatibilidade e resolução UPM
+
+O proprietário informou retorno ao Hub sem oferta de trial ou cobrança. No Package Manager oficial, a instalação pelo nome/versão exatos `com.unity.pipeline` `1.0.1` não apresentou tela de preço, trial ou licença separada. A UI indicou origem Unity Registry, assinatura Unity Technologies e versão 1.0.1. A rota documentada usa Editor 6.0 ou posterior e Unity CLI; a FAQ oficial lista CLI, MCP e plugin oficial como gratuitos e separa o trial do assistente integrado ([preços e ferramentas Unity](https://unity.com/features/ai), [pacote Unity Pipeline](https://docs.unity.com/en-us/unity-cli/unity-pipeline/unity-pipeline-package)). Os termos do Editor §2.7 continuam aplicáveis ao Package Manager ([termos do Editor Unity](https://unity.com/legal/editor-terms-of-service/software)).
+
+O resultado real do UPM foi confirmado após a importação:
+
+- `Packages/manifest.json`: pin direto `com.unity.pipeline: 1.0.1`;
+- `Packages/packages-lock.json`: entrada `1.0.1`, origem `https://packages.unity.com`, dependências resolvidas pelo UPM;
+- cache local `com.unity.pipeline@c0af79690db1` e `package.json` com nome `com.unity.pipeline`, versão `1.0.1` e compatibilidade declarada `6000.0`;
+- versões efetivas mantidas: Test Framework builtin `1.6.0`, Newtonsoft `3.2.2` e Mono.Cecil `1.11.6`. O pacote declara mínimos `1.1.33`, `3.0.2` e `1.11.6`, respectivamente; não houve downgrade nem edição manual do lock.
+
+O campo `license` do `package.json` instalado é nulo; por isso esta evidência não inventa um texto de licença do pacote. Aplicam-se os termos oficiais do Editor/Package Manager citados acima. Não foi aceita compra, trial, serviço cloud ou nova assinatura e não há despesa conhecida.
+
+### F01–F04 e correções do template
+
+- **F01 — instâncias/licença:** uma instância de Editor em execução e estado `ready`; licença Personal e data de renovação são relato do proprietário. A ocorrência histórica e a ausência de comprovação de revogação externa permanecem explícitas.
+- **F02 — GUID de Input Settings:** `ProjectSettings/EditorBuildSettings.asset` ainda contém o GUID `289c1b55c9541489481df5cc06664110`. A busca estática não encontrou `.meta` correspondente em `Assets`, e `com.unity.inputsystem` não está no manifest nem no lock. A consulta exigida por `AssetDatabase` não foi obtida pela interface disponível; não removi a referência sem essa confirmação. O handler permanece no modo legado (`activeInputHandler: 0`); não acrescentei Input System nem gameplay.
+- **F03 — identidade, Analytics e backend:** o `ProjectSettings.asset` serializado agora grava identificador Standalone provisório `com.kayzenroot.zerotrace`, `submitAnalytics: 0` e `scriptingBackend.Standalone: 0` (Mono); o backend Android existente ficou inalterado. O Editor reimportou esses valores e a recompilação ficou `up_to_date`. O identificador é uma proposta técnica de projeto, não decisão legal de marca/lançamento. `UnityConnectSettings` mantém Analytics desabilitado; `m_EngineDiagnosticsEnabled` continua ligado, portanto não se declara telemetria zero. A UI não confirmou a arquitetura ativa Windows x64. Não foram alteradas preferências globais.
+- **F04 — dependências builtin:** o manifest contém 34 módulos builtin diretos. Mantive os padrões gerados, incluindo `androidjni`, `adaptiveperformance`, `unityanalytics`, `vr` e `xr`, para evitar limpeza ampla do template sem evidência de ganho e sem prejudicar a resolução. A conexão Unity Cloud continua desativada; manter o módulo builtin de Analytics não o habilita por si só. Nenhum pacote de terceiros foi adicionado.
+
+O projeto não contém `ENABLE_RUNTIME_PIPELINE` nos arquivos versionados e esta execução não habilitou Runtime. A documentação oficial declara ambas as opções de Player Runtime desabilitadas por padrão. Como o painel Runtime não ficou acessível para leitura, os valores efetivos do painel não são apresentados como observados; não houve build de Player.
+
+### Compilação, testes e importação limpa
+
+- `unity recompile --project-path <checkout> --timeout 300 --json`: código 0, `status=up_to_date`, zero erros e zero avisos. Foi executado depois dos ajustes de Player Settings, com o Editor existente.
+- `unity test <checkout> --editor-path <Editor existente> --mode EditMode --filter StableIdentifierTests --output <relatório temporário> --timeout 600 --json`: código 6 (`COMMAND_FAILED`); nenhum relatório NUnit foi criado. Portanto o número de testes aprovados é **não comprovado**, não 0/5 nem 5/5. Uma tentativa anterior tinha apenas erro de sintaxe (`INVALID_COMMAND_ARGS`) e não iniciou testes; a chamada corrigida acima foi a única execução efetiva e não será repetida por esta integração.
+- A reabertura do mesmo checkout importou o pacote e recompilou, mas não equivale à reimportação sequencial em um checkout limpo. Essa etapa ficou bloqueada pela falha do Test Runner; nenhum segundo checkout ou Editor foi aberto.
+- A interface do Unity não ficou acessível para operar AssetDatabase ou Test Runner manualmente. A alternativa manual prevista não pôde ser executada nesta sessão. Nenhum log foi usado para inferir causa além do código de saída e da ausência do relatório.
+
+### Estado AC01–AC08
+
+| Critério | Estado nesta retomada | Evidência e limite |
+| --- | --- | --- |
+| AC01 — fontes e Context Lock | PASS | Source Check fresco: 28/28 base, 30/30 histórico, 87/87 r2 no snapshot e no HEAD, 2/2 SHA-256; base/branch/remoto alinhados. |
+| AC02 — licença e Editor oficial | PASS técnico / evidência do proprietário | Renovação Personal informada pelo proprietário; CLI abriu e reportou `ready`, sem erro de licença. Não prova revogação remota do incidente. |
+| AC03 — template e F02/F03 | BLOCKED | F03 atualizado e recompilado; F02 depende de AssetDatabase. Arquitetura ativa Windows x64 e opções efetivas Runtime não foram lidas na UI. |
+| AC04 — manifest, lock e pacotes | PASS | UPM resolveu a versão fixa 1.0.1, cache presente, origem Unity Registry e versões efetivas sem downgrade. |
+| AC05 — compilação e cinco testes EditMode | BLOCKED | Recompilação PASS, 0 erros/avisos. `unity test` terminou com código 6 sem relatório; 5/5 não comprovado. |
+| AC06 — reimportação limpa, integridade e CI | BLOCKED / parcial | Reabertura/importação do checkout atual, validação documental e diff local passaram; checkout limpo não foi iniciado. CI Unity em nuvem permanece diferido para QA-01 conforme ADR-009. |
+| AC07 — Evidence Bundle, ADR-010 e Checkpoint Delta | PARCIAL | Esta atualização complementar; proposta ADR-010 continua não adotada; Checkpoint Delta abaixo não promovido. SHA final e checks exatos são publicados na PR #25. |
+| AC08 — escopo, custo e segurança | BLOCKED | Sem despesa, cloud, gameplay, bypass ou divulgação de credenciais. O incidente permanece aberto; não há prova de contenção/revogação remota. |
+
+### Validação local desta publicação
+
+- `py -3 .github/scripts/validate_docs.py`: código 0, `DOCS_VALIDATION_OK`.
+- `git diff --check`: passou sem erro de whitespace. O diff dos Context Locks, ADR-009, ADR-010 e checkpoint está vazio.
+- Manifesto/lock: 37 dependências diretas, 55 entradas resolvidas, 0 dependências diretas ausentes e 0 versões diretas divergentes.
+- Busca de padrões comuns de token/segredo no diff: 0 ocorrências. Os únicos caminhos versionados alterados são manifest, lock de pacotes, `ProjectSettings.asset` e este Evidence Bundle; nenhum log, cache, resultado de teste ou configuração de usuário foi incluído.
+- O SHA final desta atualização e os checks remotos do HEAD exato são registrados na PR #25 depois do push.
+
+### Proposta de adoção da ADR-010 — não adotada
+
+Manter `ZT-ADR-010` como proposta condicional, sem atualizar `docs/Decisions.md`. A rota oficial local está qualificada para status e recompilação, com servidor loopback e CLI 1.0.1; a execução dos testes não foi qualificada. Não considerar adoção até AssetDatabase/F02, Test Runner 5/5, reimportação sequencial limpa, leitura efetiva de Runtime/target e gates de segurança restantes serem comprovados. ADR-009 permanece intacta: CI Unity em nuvem somente em QA-01.
+
+### Checkpoint Delta — não promovido
+
+- `ZT-D01-WO-001-IM-01/CD-02` permanece **BLOCKED**, sem aceitação final e sem avanço para IM-02.
+- Não alterei o checkpoint canônico. Exigir AssetDatabase para o GUID, resultado real 5/5 EditMode, reimportação limpa, verificação do alvo/runtime e decisão do proprietário sobre a contenção do incidente antes de fechar o WO.
+- Nenhum merge, despesa, serviço cloud, implementação de gameplay ou alteração em ADR-009 foi realizada.
