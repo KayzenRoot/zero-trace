@@ -1,6 +1,6 @@
 # ZT-D01-WO-001-IM-02/CD-01 — Checkpoint Delta proposto
 
-Estado: PROPOSTA / NÃO PROMOVIDA
+Estado: APPROVED_PENDING_INTEGRATION — delta aceito e registrado em `docs/Checkpoint.md`; efetivo em `main` após squash merge da PR #27 e checks pós-merge.
 Data: 2026-11-26
 Issue #26 | PR #27 draft/open | branch wo/zt-d01-wo-001-im-02
 
@@ -22,4 +22,4 @@ Issue #26 | PR #27 draft/open | branch wo/zt-d01-wo-001-im-02
 
 ## Condição de promoção
 
-Nenhuma promoção foi feita. Consideração futura depende de auditoria independente e decisão do proprietário após o HEAD publicado ter seus checks verificados. O arquivo canônico docs/Checkpoint.md permaneceu inalterado.
+A auditoria independente aprovou IM-02 no HEAD `29e25209876cd25cf87f43c9fc5ea79b88d88ea0`; o audit e promotion lock foram adicionados à mesma PR. O checkpoint canônico agora contém o delta como aprovado pendente de integração. Nenhum status de merge é antecipado.
