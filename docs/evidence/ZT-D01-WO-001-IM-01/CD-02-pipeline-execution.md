@@ -150,6 +150,8 @@ A auditoria humana mais recente consultada na PR #25 é de 2026-11-25T22:04:52Z,
 
 Esta comparação refere-se aos commits publicados antes do novo commit de evidência. As alterações locais de pacote e Player Settings já listadas nesta execução permanecem dentro do delta autorizado e não alteram as fontes canônicas.
 
+Após a publicação do commit `e9900aa154ba93014739beec664f8501f89ac087`, fiz uma leitura de retorno do mapa de 87 blobs r2 no HEAD publicado: 84/87 continuam idênticos ao snapshot de alteração. As três diferenças são exatamente `Packages/manifest.json`, `Packages/packages-lock.json` e `ProjectSettings/ProjectSettings.asset`; elas correspondem às entradas explícitas `Packages/manifest.json`, `Packages/packages-lock.json` e `scoped F02/F03/F04 project settings/assets only` de `authorized_delta`. A alteração deste Evidence Bundle também permanece sob o diretório de evidência autorizado. Não há divergência fora do delta aprovado. O Source Check pré-publicação registrou 87/87 antes de aplicar este delta Unity; este read-back descreve corretamente o candidato publicado.
+
 ### Licença, processo e integração local
 
 O proprietário informou renovação manual da licença Unity Personal no Hub 4.0.2 e ativação em 25/11/2026. Isso é evidência do proprietário, não leitura de conta. Com o Editor 6000.3.29f1 existente em D:, `unity open ... --until-ready --timeout 300` terminou com código 0 e estado `ready` em 19 segundos. `unity status` também retornou sucesso e estado `ready`; não apareceu bloqueio de licença na inicialização. Não foram lidos logs de licença nem arquivos de credenciais.
