@@ -1,0 +1,74 @@
+{
+  "id": "ZT-D01-WO-001-QA-01/CD-01",
+  "status": "SCOPED_DOCUMENTARY_DELTA",
+  "repository": "KayzenRoot/zero-trace",
+  "issue": 28,
+  "pr": 28,
+  "branch": "wo/zt-d01-wo-001-qa-01-exec",
+  "base_main_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
+  "pre_execution_head": "511606e22890072e2153d7e130a2613493a10460",
+  "original_context_lock": {
+    "path": "docs/locks/ZT-D01-WO-001-QA-01.json",
+    "git_blob_oid_at_pre_execution_head": "a377b7fa00d714a56bebd04e6daf24c3dce61582",
+    "sha256_at_pre_execution_head": "27c595ac66d4e13abe6e3e2d070e154babe39f53df72a7f1ab0c6e2f0daa124f",
+    "preserved_unmodified": true,
+    "verified_baseline": {
+      "unity_project_blobs": "122/122",
+      "critical_fingerprints": "24/24",
+      "canonical_source_sha256": {
+        "design/ZERO_TRACE_GDD_MASTER_v0.2.0.md": "4352e4a2bdf4f7d3925caaa6314ba1b550efe1c3f917ba05acd50aa940ea5ed1",
+        "design/ZERO_TRACE_Mission_Catalog_v0.2.0.json": "836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365"
+      },
+      "preexisting_authorized_branch_deltas": "7/7"
+    }
+  },
+  "preserved_blobs_at_pre_execution_head": {
+    "docs/Checkpoint.md": "3195635ce60b07044331a17a6611161a5a75a467",
+    "docs/adr/ZT-ADR-009.md": "f58bfed3ae22b96014e06a6c2f926c1b5ddb86c4",
+    "docs/adr/ZT-ADR-010.md": "dfe73c67ec2a4fbf15fd35587639749bdeee475a",
+    "docs/adr/ZT-ADR-011.md": "41eb6809ef66876b015ceee16d8dc75b74d40168",
+    "Packages/manifest.json": "7b309a45201057f0df90aaf046ce0f6236f00f49",
+    "Packages/packages-lock.json": "9a9e2b3a2b8fa6b55538e2c65b8c3441bc1823f8"
+  },
+  "governance": {
+    "ruleset_id": 28038825,
+    "name": "ZT-GOV-main",
+    "enforcement": "active",
+    "bypass_actors": [],
+    "required_status_check": "docs-validation",
+    "merge_method": "squash"
+  },
+  "allowed_repository_writes": [
+    "docs/adr/ZT-ADR-012.md",
+    "docs/Decisions.md",
+    "docs/evidence/ZT-D01-WO-001-QA-01/CD-01-free-entitlement-qualification.md",
+    "docs/locks/ZT-D01-WO-001-QA-01-CD-01.json"
+  ],
+  "preserved_paths": [
+    "docs/Checkpoint.md",
+    "docs/locks/ZT-D01-WO-001-QA-01.json",
+    "docs/adr/ZT-ADR-009.md",
+    "docs/adr/ZT-ADR-010.md",
+    "docs/adr/ZT-ADR-011.md",
+    "Assets/",
+    "Packages/",
+    "ProjectSettings/"
+  ],
+  "prohibited_actions": [
+    "Unity DevOps or UBA activation or enrollment",
+    "trial or pay-as-you-go checkout",
+    "new or changed terms acceptance",
+    "payment, billing, credentials, webhooks, or repository connection",
+    "build target, auto-build, cloud build, cloud test, artifact, or deployment",
+    "code, Unity project, or package changes",
+    "ruleset or repository permission changes",
+    "checkpoint promotion, merge, or D02"
+  ],
+  "validation_scope": [
+    "documentary validation",
+    "source integrity and scoped path review",
+    "secret scan of the documentary delta",
+    "exact-head CI read-back"
+  ],
+  "notes": "This scoped delta supplements but does not rewrite the original Context Lock. Final publication SHA and exact-head checks are recorded in the same existing PR metadata."
+}
