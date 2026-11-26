@@ -61,44 +61,13 @@ namespace ZeroTrace.Presentation
 
         public LocalPrototypeProgress Load()
         {
-            if (TryReadProgress(filePath, out var progress) ||
+            var commitPath = CommitFilePath;
+            if (TryReadProgress(commitPath, out var progress) ||
+                TryReadProgress(filePath, out progress) ||
+                TryReadProgress(commitPath + ".bak", out progress) ||
                 TryReadProgress(filePath + ".bak", out progress))
             {
                 return progress;
-            }
-
-            var directory = Path.GetDirectoryName(filePath);
-            var pattern = Path.GetFileName(filePath) + ".tmp.*";
-            string[] candidates;
-            try
-            {
-                candidates = Directory.Exists(directory) ? Directory.GetFiles(directory, pattern) : Array.Empty<string>();
-            }
-            catch (IOException)
-            {
-                return new LocalPrototypeProgress();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return new LocalPrototypeProgress();
-            }
-            catch (SecurityException)
-            {
-                return new LocalPrototypeProgress();
-            }
-
-            Array.Sort(candidates, (left, right) =>
-            {
-                var timeOrder = File.GetLastWriteTimeUtc(right).CompareTo(File.GetLastWriteTimeUtc(left));
-                return timeOrder != 0 ? timeOrder : string.CompareOrdinal(right, left);
-            });
-
-            foreach (var candidate in candidates)
-            {
-                if (TryReadProgress(candidate, out progress))
-                {
-                    return progress;
-                }
             }
 
             return new LocalPrototypeProgress();
@@ -129,9 +98,12 @@ namespace ZeroTrace.Presentation
 
             var directory = Path.GetDirectoryName(filePath);
             var temporaryPath = filePath + ".tmp." + Guid.NewGuid().ToString("N");
+            var committed = false;
             try
             {
                 Directory.CreateDirectory(directory);
+                EnsurePrimaryMatchesCommittedJournal();
+
                 var bytes = new UTF8Encoding(false).GetBytes(payload);
                 using (var stream = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
                 {
@@ -144,11 +116,9 @@ namespace ZeroTrace.Presentation
                     throw new LocalPrototypePersistenceException("The temporary progress could not be validated.");
                 }
 
-                PromoteTemporaryFile(temporaryPath);
-                if (!TryReadProgress(filePath, out _))
-                {
-                    throw new LocalPrototypePersistenceException("The saved progress could not be verified.");
-                }
+                PromoteTemporaryFileToJournal(temporaryPath);
+                committed = true;
+                temporaryPath = null;
             }
             catch (LocalPrototypePersistenceException)
             {
@@ -156,27 +126,159 @@ namespace ZeroTrace.Presentation
             }
             catch (IOException exception)
             {
-                throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                committed = IsCommittedCandidate(temporaryPath, payload);
+                if (!committed)
+                {
+                    throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                }
             }
             catch (UnauthorizedAccessException exception)
             {
-                throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                committed = IsCommittedCandidate(temporaryPath, payload);
+                if (!committed)
+                {
+                    throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                }
             }
             catch (ArgumentException exception)
             {
-                throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                committed = IsCommittedCandidate(temporaryPath, payload);
+                if (!committed)
+                {
+                    throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                }
             }
             catch (NotSupportedException exception)
             {
-                throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                committed = IsCommittedCandidate(temporaryPath, payload);
+                if (!committed)
+                {
+                    throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                }
             }
             catch (SecurityException exception)
             {
-                throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                committed = IsCommittedCandidate(temporaryPath, payload);
+                if (!committed)
+                {
+                    throw new LocalPrototypePersistenceException("The local progress could not be saved safely.", exception);
+                }
+            }
+            finally
+            {
+                DeleteOwnedTemporaryFile(temporaryPath);
+            }
+
+            if (committed)
+            {
+                // The journal rename/replacement is the commit point. This mirror is best-effort;
+                // Load reads the journal first, so mirror failure cannot turn a committed save
+                // into a reported failure whose state later appears on restart.
+                TryMirrorCommittedJournal();
             }
         }
 
-        private void PromoteTemporaryFile(string temporaryPath)
+        private string CommitFilePath => filePath + ".commit";
+
+        private void EnsurePrimaryMatchesCommittedJournal()
+        {
+            if (!TryReadProgress(CommitFilePath, out var committed) ||
+                TryReadProgress(filePath, out var primary) && HasSameValues(primary, committed))
+            {
+                return;
+            }
+
+            MirrorCommittedJournal();
+            if (!TryReadProgress(filePath, out primary) || !HasSameValues(primary, committed))
+            {
+                throw new LocalPrototypePersistenceException(
+                    "The last committed progress could not be safely mirrored before the next save.");
+            }
+        }
+
+        private void TryMirrorCommittedJournal()
+        {
+            try
+            {
+                MirrorCommittedJournal();
+            }
+            catch (LocalPrototypePersistenceException)
+            {
+                // The committed journal remains authoritative and readable.
+            }
+            catch (IOException)
+            {
+                // The committed journal remains authoritative and readable.
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // The committed journal remains authoritative and readable.
+            }
+            catch (ArgumentException)
+            {
+                // The committed journal remains authoritative and readable.
+            }
+            catch (NotSupportedException)
+            {
+                // The committed journal remains authoritative and readable.
+            }
+            catch (SecurityException)
+            {
+                // The committed journal remains authoritative and readable.
+            }
+        }
+
+        private void MirrorCommittedJournal()
+        {
+            var journalPath = CommitFilePath;
+            if (!TryReadProgress(journalPath, out _))
+            {
+                return;
+            }
+
+            var temporaryPath = filePath + ".mirror.tmp." + Guid.NewGuid().ToString("N");
+            try
+            {
+                File.Copy(journalPath, temporaryPath, false);
+                if (!TryReadProgress(temporaryPath, out _))
+                {
+                    throw new LocalPrototypePersistenceException("The mirrored progress could not be validated.");
+                }
+
+                PromoteTemporaryFileToPrimary(temporaryPath);
+                temporaryPath = null;
+            }
+            finally
+            {
+                DeleteOwnedTemporaryFile(temporaryPath);
+            }
+        }
+
+        private void PromoteTemporaryFileToJournal(string temporaryPath)
+        {
+            var journalPath = CommitFilePath;
+            if (!File.Exists(journalPath))
+            {
+                File.Move(temporaryPath, journalPath);
+                return;
+            }
+
+            if (TryReadProgress(journalPath, out _))
+            {
+                File.Replace(temporaryPath, journalPath, journalPath + ".bak");
+                return;
+            }
+
+            if (TryReadProgress(journalPath + ".bak", out _))
+            {
+                File.Replace(temporaryPath, journalPath, null);
+                return;
+            }
+
+            File.Replace(temporaryPath, journalPath, FindUnusedRecoveryPath(journalPath));
+        }
+
+        private void PromoteTemporaryFileToPrimary(string temporaryPath)
         {
             if (!File.Exists(filePath))
             {
@@ -196,17 +298,64 @@ namespace ZeroTrace.Presentation
                 return;
             }
 
-            File.Replace(temporaryPath, filePath, FindUnusedRecoveryPath());
+            File.Replace(temporaryPath, filePath, FindUnusedRecoveryPath(filePath));
         }
 
-        private string FindUnusedRecoveryPath()
+        private bool IsCommittedCandidate(string temporaryPath, string payload)
         {
-            var candidate = filePath + ".recovery";
+            if (!string.IsNullOrEmpty(temporaryPath) && File.Exists(temporaryPath))
+            {
+                return false;
+            }
+
+            return TryReadProgress(CommitFilePath, out var committed) &&
+                   TryParseProgress(payload, out var candidate) &&
+                   HasSameValues(committed, candidate);
+        }
+
+        private static bool HasSameValues(LocalPrototypeProgress left, LocalPrototypeProgress right)
+        {
+            return left != null && right != null &&
+                   left.exerciseComplete == right.exerciseComplete &&
+                   left.attemptCount == right.attemptCount;
+        }
+
+        private static void DeleteOwnedTemporaryFile(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (IOException)
+            {
+                // Load ignores uncommitted .tmp files; cleanup is best-effort and operation-scoped.
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Load ignores uncommitted .tmp files; cleanup is best-effort and operation-scoped.
+            }
+            catch (SecurityException)
+            {
+                // Load ignores uncommitted .tmp files; cleanup is best-effort and operation-scoped.
+            }
+        }
+
+        private static string FindUnusedRecoveryPath(string path)
+        {
+            var candidate = path + ".recovery";
             var suffix = 0;
             while (File.Exists(candidate) || Directory.Exists(candidate))
             {
                 suffix++;
-                candidate = filePath + ".recovery." + suffix.ToString(CultureInfo.InvariantCulture);
+                candidate = path + ".recovery." + suffix.ToString(CultureInfo.InvariantCulture);
             }
 
             return candidate;
