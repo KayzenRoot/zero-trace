@@ -244,5 +244,6 @@
     "sol_6_2": "licensing, entitlement, cost, security and ambiguous failures / independent audit",
     "luna_6": "bounded configuration, deterministic test/build execution after all gates pass"
   },
-  "stop": "STALE if main or any critical fingerprint changes. No account/org creation, service activation, credential, webhook, billing, cloud build or implementation until explicit owner instruction and every preflight gate passes. D01 incomplete; D02/release blocked."
+  "stop": "STALE if main or any critical fingerprint changes. No account/org creation, service activation, credential, webhook, billing, cloud build or implementation until explicit owner instruction and every preflight gate passes. D01 incomplete; D02/release blocked.",
+  "pr": 29
 }
