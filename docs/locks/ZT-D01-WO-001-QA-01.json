@@ -1,12 +1,12 @@
 {
   "wo": "ZT-D01-WO-001-QA-01",
-  "status": "PREPARED_NO_EXECUTION",
+  "status": "EXECUTION_AUTHORIZED_READ_ONLY_PREFLIGHT",
   "repository": "KayzenRoot/zero-trace",
   "parent_issue": 3,
   "child_issue": 28,
-  "branch": "wo/zt-d01-wo-001-qa-01",
-  "base_main_sha": "590a91b28a71e657e0e8879d11f4ea1685bcdb99",
-  "planning_snapshot_sha": "d93960db537d48ca2ab297e8c21c77771d1c5047",
+  "branch": "wo/zt-d01-wo-001-qa-01-exec",
+  "base_main_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
+  "planning_snapshot_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
   "predecessor": {
     "wo": "ZT-D01-WO-001-IM-02",
     "issue": 26,
@@ -207,11 +207,15 @@
     "actual_account_entitlement": "UNVERIFIED",
     "actual_plan": "UNVERIFIED",
     "actual_usage": "UNVERIFIED",
-    "activation": "NOT_AUTHORIZED",
-    "billing": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED_PENDING_PREFLIGHT",
+    "billing": "NOT_TOUCHED",
     "credential": "NOT_CREATED",
     "webhook": "NOT_CREATED",
-    "build": "NOT_RUN"
+    "build": "NOT_RUN",
+    "public_repository_access": "Official UBA documentation says public Git repositories are automatically connected without credentials; no PAT or webhook permission should be required for a manual build.",
+    "exact_editor_version": "6000.3.29f1 released 2026-11-19; official UBA supported versions page lists 6000.3 LTS as Supported and says new official versions are typically added within five business days; exact patch availability still requires Dashboard read-back.",
+    "github_status_integration": "UNVERIFIED; official public UBA docs found for build history, API, source control and external notifications, but no documented native GitHub commit status/check integration yet.",
+    "auto_build": "DISABLED / NOT AUTHORIZED"
   },
   "source_urls": [
     "https://unity.com/products/pricing-updates",
@@ -233,17 +237,41 @@
   ],
   "authorized_delta": "Planning documentation only; no project implementation or Unity DevOps activation.",
   "owner_gates": [
-    "explicit owner execution instruction",
     "owner-operated Unity Dashboard login and terms review",
     "existing Unity Personal eligibility and UBA entitlement read-back",
     "explicit Free plan, no trial/paygo/upgrade/payment prompt",
     "actual quotas/usage and enforceable stop caps",
-    "least-privilege public GitHub connection and explicit credential approval if needed"
+    "least-privilege public GitHub connection and explicit credential approval if needed",
+    "owner-operated Unity Dashboard access/read-back and any login/terms/consent actions",
+    "explicit owner approval before any new service account credential or GitHub Actions secret if required for commit status integration"
   ],
   "model_routing": {
     "sol_6_2": "licensing, entitlement, cost, security and ambiguous failures / independent audit",
     "luna_6": "bounded configuration, deterministic test/build execution after all gates pass"
   },
   "stop": "STALE if main or any critical fingerprint changes. No account/org creation, service activation, credential, webhook, billing, cloud build or implementation until explicit owner instruction and every preflight gate passes. D01 incomplete; D02/release blocked.",
-  "pr": 29
+  "pr": 29,
+  "planning_audit_snapshot_sha": "d93960db537d48ca2ab297e8c21c77771d1c5047",
+  "owner_authorization": {
+    "received": "2026-11-26",
+    "scope": "Start QA-01 and proceed with Source Check plus read-only preflight.",
+    "limits": "No account/org creation, terms acceptance, service/project activation, credential, webhook, billing/payment, cloud build or implementation until the specific gates are proven and owner-operated actions are approved."
+  },
+  "source_check": {
+    "main_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
+    "project_blobs_verified": "122/122",
+    "critical_fingerprints_verified": "24/24",
+    "planning_snapshot_project_blobs": "122/122",
+    "planning_snapshot_critical_fingerprints": "24/24",
+    "canonical_sources_unchanged_since_verified_snapshot": true,
+    "repository_visibility": "public",
+    "main_protected": true,
+    "ruleset_id": 28038825,
+    "ruleset_active": true,
+    "bypass_actors": [],
+    "required_check": "docs-validation",
+    "planning_pr_29_merge_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
+    "post_merge_docs_validation": "SUCCESS",
+    "post_merge_socket_project_report": "SUCCESS"
+  }
 }
