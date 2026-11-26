@@ -10,6 +10,8 @@
                 <ui:Button name="language-en" class="locale-button" text="English (US)" />
                 <ui:Button name="language-pt" class="locale-button" text="Português (Brasil)" />
             </ui:VisualElement>
+            <ui:Label name="prototype-notice" class="prototype-notice" text="LOCAL TECHNICAL PROTOTYPE — NOT RELEASE CONTENT" />
+            <ui:Button name="prototype-launch" class="prototype-launch" text="Start local prototype" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

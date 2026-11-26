@@ -1,7 +1,7 @@
 {
   "name":"ZeroTrace.Presentation.Tests.PlayMode",
   "rootNamespace":"ZeroTrace.Presentation.Tests.PlayMode",
-  "references":["ZeroTrace.Presentation","Unity.Localization"],
+  "references":["ZeroTrace.Presentation","ZeroTrace.Domain","Unity.Localization"],
   "includePlatforms":[],"excludePlatforms":[],"allowUnsafeCode":false,
   "overrideReferences":false,"precompiledReferences":[],"autoReferenced":false,
   "defineConstraints":[],"versionDefines":[],"optionalUnityReferences":["TestAssemblies"],"noEngineReferences":false

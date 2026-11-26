@@ -65,6 +65,8 @@ namespace ZeroTrace.Presentation
         private Label languageLabel;
         private Button englishButton;
         private Button portugueseButton;
+        private Button prototypeLaunchButton;
+        private Label prototypeNoticeLabel;
         private Coroutine initializationRoutine;
         private bool subscribed;
         private bool handlersRegistered;
@@ -77,6 +79,7 @@ namespace ZeroTrace.Presentation
         public UIDocument Document => document;
         public string CurrentLocaleCode => currentLocaleCode;
         public string StatusText => statusLabel == null ? string.Empty : statusLabel.text;
+        public event Action PrototypeRequested;
 
         private void OnEnable()
         {
@@ -165,6 +168,8 @@ namespace ZeroTrace.Presentation
             languageLabel = root.Q<Label>("language-label");
             englishButton = root.Q<Button>("language-en");
             portugueseButton = root.Q<Button>("language-pt");
+            prototypeLaunchButton = root.Q<Button>("prototype-launch");
+            prototypeNoticeLabel = root.Q<Label>("prototype-notice");
             viewBound = true;
 
             if (!HasRequiredControls())
@@ -176,6 +181,11 @@ namespace ZeroTrace.Presentation
             portugueseButton.focusable = true;
             englishButton.tabIndex = 0;
             portugueseButton.tabIndex = 0;
+            if (prototypeLaunchButton != null)
+            {
+                prototypeLaunchButton.focusable = true;
+                prototypeLaunchButton.tabIndex = 2;
+            }
             return true;
         }
 
@@ -205,6 +215,10 @@ namespace ZeroTrace.Presentation
 
             englishButton.clicked += SelectEnglish;
             portugueseButton.clicked += SelectPortuguese;
+            if (prototypeLaunchButton != null)
+            {
+                prototypeLaunchButton.clicked += HandlePrototypeRequested;
+            }
             englishButton.RegisterCallback<KeyDownEvent>(HandleEnglishKeyDown);
             englishButton.RegisterCallback<FocusInEvent>(HandleEnglishFocusIn);
             englishButton.RegisterCallback<FocusOutEvent>(HandleEnglishFocusOut);
@@ -237,6 +251,11 @@ namespace ZeroTrace.Presentation
                 portugueseButton.UnregisterCallback<FocusOutEvent>(HandlePortugueseFocusOut);
             }
 
+            if (prototypeLaunchButton != null)
+            {
+                prototypeLaunchButton.clicked -= HandlePrototypeRequested;
+            }
+
             handlersRegistered = false;
         }
 
@@ -265,6 +284,14 @@ namespace ZeroTrace.Presentation
         private void SelectEnglish() => SelectLocale(englishLocale);
         private void SelectPortuguese() => SelectLocale(portugueseLocale);
 
+        private void HandlePrototypeRequested()
+        {
+            if (ready)
+            {
+                PrototypeRequested?.Invoke();
+            }
+        }
+
         private void HandleEnglishKeyDown(KeyDownEvent evt)
         {
             if (evt.keyCode == KeyCode.Tab && !evt.shiftKey)
@@ -284,6 +311,15 @@ namespace ZeroTrace.Presentation
 
         private void HandlePortugueseKeyDown(KeyDownEvent evt)
         {
+            if (evt.keyCode == KeyCode.Tab && !evt.shiftKey && prototypeLaunchButton != null &&
+                prototypeLaunchButton.enabledInHierarchy)
+            {
+                prototypeLaunchButton.Focus();
+                evt.PreventDefault();
+                evt.StopPropagation();
+                return;
+            }
+
             if (evt.keyCode == KeyCode.Tab && evt.shiftKey)
             {
                 englishButton.Focus();
@@ -360,6 +396,16 @@ namespace ZeroTrace.Presentation
             portugueseButton.SetEnabled(true);
             englishButton.EnableInClassList("locale-button--selected", code == EnglishCode);
             portugueseButton.EnableInClassList("locale-button--selected", code == PortugueseCode);
+            if (prototypeLaunchButton != null)
+            {
+                prototypeLaunchButton.text = LocalPrototypeText.Get("launch", code);
+                prototypeLaunchButton.SetEnabled(true);
+            }
+
+            if (prototypeNoticeLabel != null)
+            {
+                prototypeNoticeLabel.text = LocalPrototypeText.Get("notice", code);
+            }
             currentLocaleCode = code;
             return true;
         }
@@ -406,6 +452,11 @@ namespace ZeroTrace.Presentation
             {
                 portugueseButton.SetEnabled(false);
                 portugueseButton.RemoveFromClassList("locale-button--selected");
+            }
+
+            if (prototypeLaunchButton != null)
+            {
+                prototypeLaunchButton.SetEnabled(false);
             }
 
             if (statusLabel != null)
@@ -456,6 +507,8 @@ namespace ZeroTrace.Presentation
             languageLabel = null;
             englishButton = null;
             portugueseButton = null;
+            prototypeLaunchButton = null;
+            prototypeNoticeLabel = null;
         }
     }
 }
