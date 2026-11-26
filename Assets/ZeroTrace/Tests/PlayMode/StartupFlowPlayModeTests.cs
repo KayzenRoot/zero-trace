@@ -18,6 +18,7 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
         [UnityTest]
         public IEnumerator StartupSceneLocalizesAndAcceptsInputFocusAndExpansion()
         {
+            Directory.CreateDirectory(Path.Combine(Application.dataPath, "../Temp/IM02"));
             Screen.SetResolution(1920, 1080, false);
             yield return SceneManager.LoadSceneAsync("SampleScene", LoadSceneMode.Single);
 
@@ -98,7 +99,6 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
             var originalScale = panel.scale;
             var portugueseTable = Resources.Load<StringTable>("Localization/Tables/Startup-pt-BR");
             var expandedStatus = portugueseTable.GetEntry("foundation.status.expansion").LocalizedValue;
-            Directory.CreateDirectory(Path.Combine(Application.dataPath, "../Temp/IM02"));
 
             panel.scale = 1f;
             status.text = expandedStatus;
