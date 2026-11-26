@@ -6,7 +6,7 @@
   "child_issue": 28,
   "branch": "wo/zt-d01-wo-001-qa-01",
   "base_main_sha": "590a91b28a71e657e0e8879d11f4ea1685bcdb99",
-  "planning_snapshot_sha": "aed503a8f18f531796f104c3f456c83c3deab7d2",
+  "planning_snapshot_sha": "9d17788301dcad2dad3216d8daa14ed46f88db03",
   "predecessor": {
     "wo": "ZT-D01-WO-001-IM-02",
     "issue": 26,
@@ -149,7 +149,7 @@
   },
   "critical_git_blobs": {
     "AGENTS.md": "61146fc4e55d5c22aacd374e150767aa8b73964f",
-    "docs/Checkpoint.md": "28a4e9cb207a1d1ef2bd9871e9316626c0fe9cef",
+    "docs/Checkpoint.md": "c7ea5c2093323e055718bf47181b646886d9f580",
     "docs/Decisions.md": "2b6131e4bb916f588d12bbf8374397fb5482b4b3",
     "docs/Scope.md": "dc623557691b86dd077c3804c613436448d8b390",
     "docs/DefinitionOfDone.md": "bfa7b5d55eb32d0d998c1bd78085655fc8dc06bb",
@@ -162,8 +162,8 @@
     "docs/Sources.md": "e43f413ddf3236422c2f28ef6f1c920d16d4c63e",
     "docs/adr/ZT-ADR-009.md": "f58bfed3ae22b96014e06a6c2f926c1b5ddb86c4",
     "docs/adr/ZT-ADR-010.md": "dfe73c67ec2a4fbf15fd35587639749bdeee475a",
-    "docs/work-orders/ZT-D01-WO-001.md": "953541502dbf1ce181e714b828d07becb9bfd13a",
-    "docs/work-orders/D01/ZT-D01-WO-001-QA-01.md": "cf0f7f3aaf88bd698fe2f371e4e0de89c3a518fa",
+    "docs/work-orders/ZT-D01-WO-001.md": "6eac165e1f3cefe9086e467411e8b784280bda08",
+    "docs/work-orders/D01/ZT-D01-WO-001-QA-01.md": "269247f10070ee416bf5d37fd50e301b290bc67d",
     "docs/work-orders/D01/QA-01-evidence-template.md": "a9ab32af080c89789358eff9baa455cc860d6194",
     "docs/work-orders/D01/QA-01-codex-prompt.md": "20142098cfb33b563e2cdeb3c9d0ab1c48d71ebe",
     "Packages/manifest.json": "7b309a45201057f0df90aaf046ce0f6236f00f49",
