@@ -1,14 +1,14 @@
 # ZT-V01-WO-002 — planning Evidence Bundle
 
-**Status:** PLANNING ONLY — IMPORTANT / OPTIONAL; NOT AUTHORIZED FOR EXECUTION  
-**Date:** 2026-11-27  
-**Repository:** KayzenRoot/zero-trace  
-**Issue:** #32  
-**Planning branch:** docs/zt-v01-wo-002-apartment-planning  
-**Base main:** 8b7a76ca4155a164f788fc9f417af54ab9a373d6  
-**Predecessor:** ZT-V01-WO-001 / PR #30, merged at 0bba2b6ccde6ed263a39b16d444b6094e5292483  
-**Planning PR:** #32 (draft)  
-**Context Lock:** docs/locks/ZT-V01-WO-002-planning.json
+- **Status:** PLANNING ONLY — IMPORTANT / OPTIONAL; NOT AUTHORIZED FOR EXECUTION
+- **Date:** 2026-11-27
+- **Repository:** KayzenRoot/zero-trace
+- **Issue:** #32
+- **Planning branch:** docs/zt-v01-wo-002-apartment-planning
+- **Base main:** 8b7a76ca4155a164f788fc9f417af54ab9a373d6
+- **Predecessor:** ZT-V01-WO-001 / PR #30, merged at 0bba2b6ccde6ed263a39b16d444b6094e5292483
+- **Planning PR:** #32 (draft)
+- **Context Lock:** docs/locks/ZT-V01-WO-002-planning.json
 
 ## Source Check
 
@@ -40,7 +40,7 @@
 - Prepared a planning-only Context Lock with exact base SHA, source fingerprints, source manifest hashes, protected PR #28 state and stale-lock rules.
 - Added an optional IMPORTANT section to docs/Backlog.md without adding a D00–D19 DAG node.
 - Added a PROPOSED entry to docs/Decisions.md.
-- No Unity project file, code, scene, package, manifest, lockfile, GDD, mission catalog, VisualSpec or Checkpoint was modified.
+- No Unity project file, code, scene, package manifest, package lock, GDD, mission catalog, VisualSpec or Checkpoint was modified.
 - No Unity Editor, Unity Cloud, UBA, DevOps, trial, new terms, credential, payment, build, publication or deployment was used.
 
 ## Proposed Checkpoint Delta
