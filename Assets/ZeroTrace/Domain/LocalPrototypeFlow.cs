@@ -15,7 +15,8 @@ namespace ZeroTrace.Domain
         None,
         Mail,
         FileManager,
-        Academy
+        Academy,
+        Terminal
     }
 
     public enum ExerciseSubmissionResult
@@ -59,7 +60,7 @@ namespace ZeroTrace.Domain
     /// <summary>Deterministic, Unity-independent flow for the local technical prototype.</summary>
     public sealed class LocalPrototypeFlow
     {
-        public const string RequiredSyntheticFileId = "recovery_manifest";
+        public const string RequiredSyntheticFileId = SyntheticFileCatalog.RecoveryManifestId;
 
         private readonly ILocalPrototypeProgressStore progressStore;
         private LocalPrototypeProgress progress;
@@ -213,9 +214,7 @@ namespace ZeroTrace.Domain
 
         private static bool IsKnownSyntheticFile(string syntheticFileId)
         {
-            return string.Equals(syntheticFileId, "briefing", StringComparison.Ordinal) ||
-                   string.Equals(syntheticFileId, RequiredSyntheticFileId, StringComparison.Ordinal) ||
-                   string.Equals(syntheticFileId, "shift_note", StringComparison.Ordinal);
+            return SyntheticFileCatalog.TryGetById(syntheticFileId, out _);
         }
     }
 }

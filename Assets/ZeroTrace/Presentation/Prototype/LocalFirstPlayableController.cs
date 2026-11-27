@@ -1,4 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZeroTrace.Domain;
@@ -27,13 +30,22 @@ namespace ZeroTrace.Presentation
         private Label desktopClock;
         private Label exerciseResult;
         private Label selectedFileLabel;
+        private TextField terminalInput;
+        private ScrollView terminalOutput;
         private LocalPrototypeFlow flow;
+        private LocalPrototypeTerminalSession terminalSession;
+        private readonly TerminalCommandDispatcher terminalDispatcher = new TerminalCommandDispatcher();
         private LocalPrototypeRoom room;
         private Coroutine startupLinkRoutine;
         private Coroutine bootRoutine;
         private ILocalPrototypeProgressStore injectedProgressStore;
         private string localeCode = "en-US";
         private string selectedFileId;
+        private string terminalInputDraft = string.Empty;
+        private string terminalHistoryDraft = string.Empty;
+        private int terminalHistoryCursor;
+        private float terminalScrollOffset;
+        private bool terminalInputFocused;
         private bool prototypeRunning;
 
         public bool IsPrototypeRunning => prototypeRunning;
@@ -121,6 +133,12 @@ namespace ZeroTrace.Presentation
             }
 
             flow = new LocalPrototypeFlow(injectedProgressStore ?? new LocalPrototypeProgressStore());
+            terminalSession = new LocalPrototypeTerminalSession();
+            terminalInputDraft = string.Empty;
+            terminalHistoryDraft = string.Empty;
+            terminalHistoryCursor = 0;
+            terminalScrollOffset = 0f;
+            terminalInputFocused = false;
             localeCode = startup != null && !string.IsNullOrEmpty(startup.CurrentLocaleCode)
                 ? startup.CurrentLocaleCode
                 : localeCode;
@@ -199,10 +217,17 @@ namespace ZeroTrace.Presentation
             var app = appId == "mail" ? LocalPrototypeApp.Mail
                 : appId == "files" ? LocalPrototypeApp.FileManager
                 : appId == "academy" ? LocalPrototypeApp.Academy
+                : appId == "terminal" ? LocalPrototypeApp.Terminal
                 : LocalPrototypeApp.None;
             if (!flow.OpenApp(app))
             {
                 return false;
+            }
+
+            if (flow.ActiveApp == LocalPrototypeApp.Terminal)
+            {
+                terminalHistoryCursor = terminalSession == null ? 0 : terminalSession.History.Count;
+                terminalInputFocused = true;
             }
 
             selectedFileId = null;
@@ -213,6 +238,12 @@ namespace ZeroTrace.Presentation
 
         public bool CloseActiveApp()
         {
+            if (flow != null && flow.ActiveApp == LocalPrototypeApp.Terminal)
+            {
+                CaptureTerminalUiState();
+                terminalInputFocused = false;
+            }
+
             if (flow == null || !flow.CloseApp())
             {
                 return false;
@@ -300,6 +331,7 @@ namespace ZeroTrace.Presentation
                 bootRoutine = null;
             }
 
+            ResetTerminalSession();
             RemoveDesktop();
             room.Motor.SetControlsEnabled(true);
             RenderRoomStatus();
@@ -324,6 +356,7 @@ namespace ZeroTrace.Presentation
                 flow.PowerOff();
             }
 
+            ResetTerminalSession();
             RemoveDesktop();
             if (overlayRoot != null)
             {
@@ -456,7 +489,10 @@ namespace ZeroTrace.Presentation
             AddNavigationButton(navigation, "mail", LocalPrototypeApp.Mail);
             AddNavigationButton(navigation, "files", LocalPrototypeApp.FileManager);
             AddNavigationButton(navigation, "academy", LocalPrototypeApp.Academy);
+            AddNavigationButton(navigation, "terminal", LocalPrototypeApp.Terminal);
             var power = CreateButton(Text("power"), () => ShutdownComputer(), false);
+            power.name = "prototype-power-off";
+            power.tabIndex = 0;
             power.style.marginLeft = 12;
             navigation.Add(power);
             desktopRoot.Add(navigation);
@@ -475,8 +511,13 @@ namespace ZeroTrace.Presentation
 
         private void AddNavigationButton(VisualElement navigation, string textKey, LocalPrototypeApp app)
         {
-            var id = app == LocalPrototypeApp.Mail ? "mail" : app == LocalPrototypeApp.FileManager ? "files" : "academy";
+            var id = app == LocalPrototypeApp.Mail ? "mail"
+                : app == LocalPrototypeApp.FileManager ? "files"
+                : app == LocalPrototypeApp.Academy ? "academy"
+                : "terminal";
             var button = CreateButton(Text(textKey), () => OpenApp(id), false);
+            button.name = "prototype-nav-" + id;
+            button.tabIndex = 0;
             navigation.Add(button);
         }
 
@@ -490,10 +531,13 @@ namespace ZeroTrace.Presentation
             appContent.Clear();
             exerciseResult = null;
             selectedFileLabel = null;
+            terminalInput = null;
+            terminalOutput = null;
 
             var appTitle = flow.ActiveApp == LocalPrototypeApp.Mail ? Text("mailTitle")
                 : flow.ActiveApp == LocalPrototypeApp.FileManager ? Text("filesTitle")
                 : flow.ActiveApp == LocalPrototypeApp.Academy ? Text("academyTitle")
+                : flow.ActiveApp == LocalPrototypeApp.Terminal ? Text("terminalTitle")
                 : Text("desktopTitle");
             var heading = StyledLabel(appTitle, 22, Frost, true);
             heading.name = "prototype-app-title";
@@ -519,9 +563,10 @@ namespace ZeroTrace.Presentation
                 prompt.style.marginBottom = 8;
                 appContent.Add(prompt);
                 appContent.Add(StyledLabel(Text("selectFile"), 13, Muted, false));
-                AddFileButton("briefing", "fileBriefing");
-                AddFileButton(LocalPrototypeFlow.RequiredSyntheticFileId, "fileRecovery");
-                AddFileButton("shift_note", "fileShift");
+                foreach (var file in SyntheticFileCatalog.All)
+                {
+                    AddFileButton(file);
+                }
                 selectedFileLabel = StyledLabel(string.IsNullOrEmpty(selectedFileId)
                     ? Text("notSelected")
                     : LocalPrototypeText.Format("selected", localeCode, selectedFileId + ".txt"), 13, Cyan, true);
@@ -551,6 +596,10 @@ namespace ZeroTrace.Presentation
                 appContent.Add(body);
                 appContent.Add(CreateButton(Text("files"), () => OpenApp("files"), false));
             }
+            else if (flow.ActiveApp == LocalPrototypeApp.Terminal)
+            {
+                BuildTerminalApp();
+            }
             else
             {
                 appContent.Add(StyledLabel(Text("notice"), 15, Cyan, true));
@@ -561,15 +610,464 @@ namespace ZeroTrace.Presentation
             footer.style.justifyContent = Justify.FlexEnd;
             footer.style.alignItems = Align.FlexEnd;
             var close = CreateButton(Text("close"), () => CloseActiveApp(), false);
+            close.name = "prototype-app-close";
+            close.tabIndex = 0;
+            close.RegisterCallback<KeyDownEvent>(HandleTerminalControlKeyDown);
             footer.Add(close);
             appContent.Add(footer);
         }
 
-        private void AddFileButton(string id, string textKey)
+        private void BuildTerminalApp()
         {
-            var button = CreateButton(Text(textKey), () => SelectSyntheticFile(id), false);
-            button.name = "prototype-file-" + id;
-            button.userData = textKey;
+            appContent.Add(StyledLabel(Text("terminalIntro"), 16, Muted, false));
+
+            terminalOutput = new ScrollView(ScrollViewMode.Vertical) { name = "terminal-output" };
+            terminalOutput.focusable = true;
+            terminalOutput.tabIndex = 0;
+            terminalOutput.style.flexGrow = 1;
+            terminalOutput.style.minHeight = 120;
+            terminalOutput.style.marginTop = 12;
+            terminalOutput.style.marginBottom = 12;
+            terminalOutput.style.paddingLeft = 12;
+            terminalOutput.style.paddingRight = 12;
+            terminalOutput.style.paddingTop = 10;
+            terminalOutput.style.paddingBottom = 10;
+            terminalOutput.style.backgroundColor = Obsidian;
+            appContent.Add(terminalOutput);
+
+            var inputRow = new VisualElement();
+            inputRow.style.flexDirection = FlexDirection.Row;
+            inputRow.style.alignItems = Align.FlexEnd;
+            inputRow.style.flexWrap = Wrap.Wrap;
+            terminalInput = new TextField(Text("terminalInputLabel"))
+            {
+                name = "terminal-input",
+                maxLength = TerminalCommandDispatcher.MaximumInputCharacters,
+                multiline = false
+            };
+            terminalInput.tabIndex = 0;
+            terminalInput.style.flexGrow = 1;
+            terminalInput.style.minWidth = 280;
+            terminalInput.SetValueWithoutNotify(terminalInputDraft);
+            terminalInput.RegisterCallback<ChangeEvent<string>>(HandleTerminalInputChanged);
+            terminalInput.RegisterCallback<KeyDownEvent>(HandleTerminalInputKeyDown);
+            inputRow.Add(terminalInput);
+
+            var run = CreateButton(Text("terminalRun"), ExecuteTerminalInput, true);
+            run.name = "terminal-run";
+            run.tabIndex = 0;
+            run.RegisterCallback<KeyDownEvent>(HandleTerminalControlKeyDown);
+            inputRow.Add(run);
+
+            var clear = CreateButton(Text("terminalClearOutput"), ClearTerminalOutput, false);
+            clear.name = "terminal-clear-output";
+            clear.tabIndex = 0;
+            clear.RegisterCallback<KeyDownEvent>(HandleTerminalControlKeyDown);
+            inputRow.Add(clear);
+            appContent.Add(inputRow);
+
+            var hint = StyledLabel(Text("terminalRunHint"), 13, Muted, false);
+            hint.name = "terminal-keyboard-hint";
+            hint.style.marginTop = 6;
+            appContent.Add(hint);
+
+            RenderTerminalOutput(false);
+            if (terminalInputFocused)
+            {
+                var input = terminalInput;
+                input.schedule.Execute(() =>
+                {
+                    if (input.panel != null)
+                    {
+                        input.Focus();
+                    }
+                }).StartingIn(0);
+            }
+        }
+
+        private void HandleTerminalInputChanged(ChangeEvent<string> change)
+        {
+            terminalInputDraft = change.newValue ?? string.Empty;
+            if (terminalSession != null && terminalHistoryCursor >= terminalSession.History.Count)
+            {
+                terminalHistoryCursor = terminalSession.History.Count;
+                terminalHistoryDraft = terminalInputDraft;
+            }
+        }
+
+        private void HandleTerminalInputKeyDown(KeyDownEvent keyEvent)
+        {
+            if (keyEvent.keyCode == KeyCode.Tab)
+            {
+                keyEvent.StopPropagation();
+                keyEvent.PreventDefault();
+                FocusTerminalControl(terminalInput, keyEvent.shiftKey ? -1 : 1);
+            }
+            else if (keyEvent.keyCode == KeyCode.Return || keyEvent.keyCode == KeyCode.KeypadEnter)
+            {
+                keyEvent.StopPropagation();
+                keyEvent.PreventDefault();
+                ExecuteTerminalInput();
+            }
+            else if (keyEvent.keyCode == KeyCode.UpArrow)
+            {
+                keyEvent.StopPropagation();
+                keyEvent.PreventDefault();
+                NavigateTerminalHistory(-1);
+            }
+            else if (keyEvent.keyCode == KeyCode.DownArrow)
+            {
+                keyEvent.StopPropagation();
+                keyEvent.PreventDefault();
+                NavigateTerminalHistory(1);
+            }
+        }
+
+        private void HandleTerminalControlKeyDown(KeyDownEvent keyEvent)
+        {
+            if (flow == null || flow.ActiveApp != LocalPrototypeApp.Terminal ||
+                keyEvent.keyCode != KeyCode.Tab)
+            {
+                return;
+            }
+
+            keyEvent.StopPropagation();
+            keyEvent.PreventDefault();
+            FocusTerminalControl(keyEvent.currentTarget as VisualElement, keyEvent.shiftKey ? -1 : 1);
+        }
+
+        private void FocusTerminalControl(VisualElement current, int direction)
+        {
+            if (appContent == null || terminalInput == null)
+            {
+                return;
+            }
+
+            var controls = new VisualElement[]
+            {
+                terminalInput,
+                appContent.Q<Button>("terminal-run"),
+                appContent.Q<Button>("terminal-clear-output"),
+                appContent.Q<Button>("prototype-app-close")
+            };
+            var currentIndex = -1;
+            for (var index = 0; index < controls.Length; index++)
+            {
+                if (controls[index] == current)
+                {
+                    currentIndex = index;
+                    break;
+                }
+            }
+
+            if (currentIndex < 0)
+            {
+                return;
+            }
+
+            for (var step = 1; step <= controls.Length; step++)
+            {
+                var nextIndex = (currentIndex + direction * step + controls.Length * 2) % controls.Length;
+                if (controls[nextIndex] == null || !controls[nextIndex].focusable)
+                {
+                    continue;
+                }
+
+                controls[nextIndex].Focus();
+                terminalInputFocused = controls[nextIndex] == terminalInput;
+                return;
+            }
+        }
+
+        private void NavigateTerminalHistory(int direction)
+        {
+            if (terminalInput == null || terminalSession == null || terminalSession.History.Count == 0)
+            {
+                return;
+            }
+
+            var history = terminalSession.History;
+            if (terminalHistoryCursor < 0 || terminalHistoryCursor > history.Count)
+            {
+                terminalHistoryCursor = history.Count;
+            }
+
+            if (terminalHistoryCursor == history.Count)
+            {
+                terminalHistoryDraft = terminalInput.value ?? string.Empty;
+            }
+
+            if (direction < 0)
+            {
+                if (terminalHistoryCursor == 0)
+                {
+                    return;
+                }
+
+                terminalHistoryCursor--;
+                terminalInputDraft = history[terminalHistoryCursor];
+            }
+            else
+            {
+                if (terminalHistoryCursor >= history.Count - 1)
+                {
+                    terminalHistoryCursor = history.Count;
+                    terminalInputDraft = terminalHistoryDraft;
+                }
+                else
+                {
+                    terminalHistoryCursor++;
+                    terminalInputDraft = history[terminalHistoryCursor];
+                }
+            }
+
+            terminalInput.SetValueWithoutNotify(terminalInputDraft);
+            terminalInput.Focus();
+        }
+
+        private void ExecuteTerminalInput()
+        {
+            if (terminalInput == null || terminalSession == null || flow == null)
+            {
+                return;
+            }
+
+            var input = terminalInput.value ?? string.Empty;
+            var safeInput = TerminalCommandDispatcher.IsSafeInput(input) && !string.IsNullOrWhiteSpace(input);
+            var snapshot = new TerminalStateSnapshot(flow.ComputerState, flow.ActiveApp,
+                flow.ExerciseComplete, flow.AttemptCount);
+            var result = terminalDispatcher.Execute(input, snapshot);
+
+            if (safeInput)
+            {
+                terminalSession.RecordHistory(input);
+            }
+
+            if (result.Code == TerminalResultCode.Clear)
+            {
+                terminalSession.ClearOutput();
+            }
+            else
+            {
+                var entry = new TerminalTranscriptEntry(input, safeInput, result);
+                var rendered = FormatTerminalEntry(entry);
+                if (rendered.Length > LocalPrototypeTerminalSession.MaximumCommandOutputCharacters)
+                {
+                    result = new TerminalCommandResult(TerminalResultCode.OutputTooLong, snapshot);
+                    entry = new TerminalTranscriptEntry(string.Empty, false, result);
+                    rendered = FormatTerminalEntry(entry);
+                }
+
+                if (!terminalSession.AppendOutput(entry, rendered.Length))
+                {
+                    result = new TerminalCommandResult(TerminalResultCode.OutputTooLong, snapshot);
+                    entry = new TerminalTranscriptEntry(string.Empty, false, result);
+                    rendered = FormatTerminalEntry(entry);
+                    terminalSession.AppendOutput(entry, rendered.Length);
+                }
+            }
+
+            terminalInputDraft = string.Empty;
+            terminalHistoryDraft = string.Empty;
+            terminalHistoryCursor = terminalSession.History.Count;
+            terminalInput.SetValueWithoutNotify(string.Empty);
+            terminalInputFocused = true;
+            RenderTerminalOutput(true);
+            terminalInput.Focus();
+        }
+
+        private void ClearTerminalOutput()
+        {
+            if (terminalSession == null)
+            {
+                return;
+            }
+
+            terminalSession.ClearOutput();
+            RenderTerminalOutput(false);
+            if (terminalInput != null)
+            {
+                terminalInput.Focus();
+            }
+        }
+
+        private void RenderTerminalOutput(bool scrollToBottom)
+        {
+            if (terminalOutput == null || terminalSession == null)
+            {
+                return;
+            }
+
+            terminalOutput.contentContainer.Clear();
+            VisualElement last = null;
+            var entries = terminalSession.Output;
+            for (var index = 0; index < entries.Count; index++)
+            {
+                var label = StyledLabel(FormatTerminalEntry(entries[index]), 16, Frost, false);
+                label.enableRichText = false;
+                label.name = "terminal-output-line-" + index.ToString(CultureInfo.InvariantCulture);
+                label.style.whiteSpace = WhiteSpace.Normal;
+                label.style.marginBottom = 8;
+                terminalOutput.Add(label);
+                last = label;
+            }
+
+            if (last != null)
+            {
+                var scroll = terminalOutput;
+                if (scrollToBottom)
+                {
+                    scroll.schedule.Execute(() => scroll.ScrollTo(last)).StartingIn(0);
+                }
+                else
+                {
+                    var offset = terminalScrollOffset;
+                    scroll.schedule.Execute(() => scroll.scrollOffset = new Vector2(0f, offset)).StartingIn(0);
+                }
+            }
+        }
+
+        private string FormatTerminalEntry(TerminalTranscriptEntry entry)
+        {
+            var output = FormatTerminalResult(entry.Result);
+            return entry.EchoInput ? "> " + entry.Input + "\n" + output : output;
+        }
+
+        private string FormatTerminalResult(TerminalCommandResult result)
+        {
+            var snapshot = result.Snapshot;
+            string output;
+            switch (result.Code)
+            {
+                case TerminalResultCode.Help:
+                    output = Text("terminalHelp");
+                    break;
+                case TerminalResultCode.Clear:
+                    output = string.Empty;
+                    break;
+                case TerminalResultCode.WorldStatus:
+                    output = LocalPrototypeText.Format("terminalWorldStatus", localeCode,
+                        ComputerStateText(snapshot.ComputerState), AppText(snapshot.ActiveApp));
+                    break;
+                case TerminalResultCode.FilesList:
+                    var builder = new StringBuilder(Text("terminalFilesHeader"));
+                    foreach (var file in SyntheticFileCatalog.All)
+                    {
+                        builder.Append('\n').Append("- ").Append(file.Id).Append(" · ")
+                            .Append(file.GetDisplayLabel(localeCode));
+                    }
+
+                    output = builder.ToString();
+                    break;
+                case TerminalResultCode.FileRead:
+                    output = result.File == null ? Text("terminalFileNotFound")
+                        : LocalPrototypeText.Format("terminalFileHeader", localeCode,
+                            result.File.FileName, result.File.GetContent(localeCode));
+                    break;
+                case TerminalResultCode.CaseList:
+                    output = Text("terminalCaseSummary");
+                    break;
+                case TerminalResultCode.AcademyStatus:
+                    output = LocalPrototypeText.Format("terminalAcademyStatus", localeCode,
+                        Text(snapshot.ExerciseComplete ? "exerciseCompleted" : "exercisePending"),
+                        snapshot.AttemptCount.ToString(CultureInfo.InvariantCulture));
+                    break;
+                case TerminalResultCode.NotReady:
+                    output = Text("terminalUnavailable");
+                    break;
+                case TerminalResultCode.TerminalInactive:
+                    output = Text("terminalInactive");
+                    break;
+                case TerminalResultCode.EmptyInput:
+                    output = Text("terminalEmpty");
+                    break;
+                case TerminalResultCode.InputTooLong:
+                    output = Text("terminalInputLimit");
+                    break;
+                case TerminalResultCode.TooManyArguments:
+                    output = Text("terminalArgumentLimit");
+                    break;
+                case TerminalResultCode.InvalidCharacters:
+                    output = Text("terminalInvalidCharacters");
+                    break;
+                case TerminalResultCode.UnknownCommand:
+                    output = Text("terminalUnknownCommand");
+                    break;
+                case TerminalResultCode.WrongArity:
+                    output = Text("terminalWrongArity");
+                    break;
+                case TerminalResultCode.SyntheticFileNotFound:
+                    output = Text("terminalFileNotFound");
+                    break;
+                default:
+                    output = Text("terminalOutputLimit");
+                    break;
+            }
+
+            return result.IsError ? Text("terminalErrorPrefix") + output : output;
+        }
+
+        private string ComputerStateText(LocalComputerState state) => state == LocalComputerState.Off ? Text("computerOff")
+            : state == LocalComputerState.Booting ? Text("computerBooting")
+            : state == LocalComputerState.Ready ? Text("computerReady")
+            : Text("computerShutdown");
+
+        private string AppText(LocalPrototypeApp app) => app == LocalPrototypeApp.Mail ? Text("mail")
+            : app == LocalPrototypeApp.FileManager ? Text("files")
+            : app == LocalPrototypeApp.Academy ? Text("academy")
+            : app == LocalPrototypeApp.Terminal ? Text("terminal")
+            : Text("terminalNoApp");
+
+        private void CaptureTerminalUiState()
+        {
+            if (terminalInput != null)
+            {
+                terminalInputDraft = terminalInput.value ?? string.Empty;
+                terminalInputFocused = terminalInput.focusController != null &&
+                                       terminalInput.focusController.focusedElement == terminalInput;
+            }
+
+            if (terminalOutput != null)
+            {
+                terminalScrollOffset = terminalOutput.scrollOffset.y;
+            }
+        }
+
+        private void RebalanceTerminalOutputForLocale()
+        {
+            if (terminalSession == null)
+            {
+                return;
+            }
+
+            var entries = terminalSession.Output;
+            var lengths = new List<int>(entries.Count);
+            foreach (var entry in entries)
+            {
+                lengths.Add(FormatTerminalEntry(entry).Length);
+            }
+
+            terminalSession.RecalculateOutputLengths(lengths);
+        }
+
+        private void ResetTerminalSession()
+        {
+            terminalSession?.Reset();
+            terminalSession = null;
+            terminalInput = null;
+            terminalOutput = null;
+            terminalInputDraft = string.Empty;
+            terminalHistoryDraft = string.Empty;
+            terminalHistoryCursor = 0;
+            terminalScrollOffset = 0f;
+            terminalInputFocused = false;
+        }
+
+        private void AddFileButton(SyntheticFile file)
+        {
+            var button = CreateButton(file.GetDisplayLabel(localeCode), () => SelectSyntheticFile(file.Id), false);
+            button.name = "prototype-file-" + file.Id;
+            button.userData = file.Id;
             button.style.alignSelf = Align.FlexStart;
             button.style.minWidth = 280;
             button.style.borderLeftWidth = 0;
@@ -593,10 +1091,12 @@ namespace ZeroTrace.Presentation
                     continue;
                 }
 
-                var fileId = button.name.Substring("prototype-file-".Length);
-                var textKey = button.userData as string;
+                var fileId = button.userData as string;
                 var selected = string.Equals(selectedFileId, fileId, System.StringComparison.Ordinal);
-                button.text = (selected ? "✓  " : string.Empty) + Text(textKey);
+                var displayLabel = SyntheticFileCatalog.TryGetById(fileId, out var file)
+                    ? file.GetDisplayLabel(localeCode)
+                    : string.Empty;
+                button.text = (selected ? "✓  " : string.Empty) + displayLabel;
                 button.style.borderLeftWidth = selected ? 4 : 0;
                 button.style.borderLeftColor = selected ? Lime : Carbon;
                 button.style.backgroundColor = selected ? (Color)new Color32(36, 55, 46, 255) : Carbon;
@@ -683,9 +1183,11 @@ namespace ZeroTrace.Presentation
                 : localeCode;
             if (activeLocale != localeCode)
             {
+                CaptureTerminalUiState();
                 localeCode = activeLocale;
                 if (desktopRoot != null)
                 {
+                    RebalanceTerminalOutputForLocale();
                     BuildDesktop();
                 }
                 else
