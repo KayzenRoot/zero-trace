@@ -27,5 +27,5 @@ D00 design/governance approved; effective on main after PR #1 integration. D01 P
 
 ## Optional V01 technical-prototype refinements (outside the canonical D00–D19 DAG)
 
-- **ZT-V01-WO-002 — Starter apartment visual refinement** — Issue #32; planning PR #32. Classification: **IMPORTANT / OPTIONAL**, not NECESSARY. The proposal aligns the already merged local technical prototype with the modest one-monitor starter-apartment direction in Visual Master v0.2.0. It is not a release gate, does not add a D00–D19 node, and does not satisfy or replace D01 QA-01. Execution is not authorized; see ZT-ADR-014 (PROPOSED) and docs/work-orders/V01/ZT-V01-WO-002.md.
+- **ZT-V01-WO-002 — Starter apartment visual refinement** — Issue #32; planning PR #32. Classification: **IMPORTANT / OPTIONAL**, not NECESSARY. The proposal aligns the already merged local technical prototype with the modest one-monitor starter-apartment direction in Visual Master v0.2.0. It is not a release gate, does not add a D00–D19 node, and does not satisfy or replace D01 QA-01. Execution is not authorized; see ZT-ADR-014 (owner-approved for planning adoption; effective upon PR #32 integration) and docs/work-orders/V01/ZT-V01-WO-002.md.
 - Canonical D01/QA-01 sequencing and the D00–D19 dependency graph above remain unchanged. D01 remains incomplete; D02 and D09 remain blocked.
