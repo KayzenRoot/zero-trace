@@ -17,6 +17,7 @@
 - Live ruleset 28038825 (ZT-GOV-main) is active on refs/heads/main, squash-only, with no bypass actors. Required status context is docs-validation.
 - On current main SHA 8b7a76ca4155a164f788fc9f417af54ab9a373d6, docs-validation check-run 140480725879 is SUCCESS and Socket Security: Project Report check-run 140480739188 is SUCCESS. No Socket Security: Pull Request Alerts check-run was observed on this merge SHA; this bundle does not claim 3/3 checks on main.
 - docs/Sources.md identifies GDD SHA-256 4352e4a2bdf4f7d3925caaa6314ba1b550efe1c3f917ba05acd50aa940ea5ed1 and mission catalog SHA-256 836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365. The main docs-validation run passed; its validator recomputes both hashes against the original bytes.
+- Planning Context Lock verification: all 24 critical Git blob fingerprints were re-read from main and matched 24/24; the GDD and mission-catalog Git blob IDs also match. ADR-011 and ADR-012 blob IDs were re-read on PR #28's protected branch and match the recorded values.
 - Canonical Checkpoint remains D01 incomplete, QA-01 unqualified/planning-only and not authorized for execution, D02/D09 blocked. The formal D01 gate is not changed by this optional visual proposal.
 
 ## Source findings
