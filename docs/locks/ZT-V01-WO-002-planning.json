@@ -77,6 +77,8 @@
   },
   "critical_git_blobs": {
     "AGENTS.md": "61146fc4e55d5c22aacd374e150767aa8b73964f",
+    "docs/README.md": "63bc325f043f4db59279d0d97238391e6962ff63",
+    "docs/ProjectOverview.md": "b79721d0e251d4065f711f424419368945379f35",
     "docs/Checkpoint.md": "6e65d473058f1b8854289af4cd05e34ee6f15edf",
     "docs/Decisions.md": "1dc86589fe44d30105e822d7b051effe535efd44",
     "docs/Scope.md": "dc623557691b86dd077c3804c613436448d8b390",
@@ -99,7 +101,10 @@
     "Assets/ZeroTrace/Presentation/Prototype/LocalFirstPlayableController.cs": "99e885abc9b5f2c42605cb58d7011ae6ebe231d7",
     "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypePlayerMotor.cs": "d9ef215744823900b93dc2c4455867a2229d06cd",
     "Assets/ZeroTrace/Tests/PlayMode/LocalFirstPlayablePlayModeTests.cs": "51c406f71c5af318c1292ec8ea1f1c5bb9287e05",
-    "Assets/Scenes/SampleScene.unity": "c8b6b44a277d33ea563c95dc9386daebaea85bc4"
+    "Assets/Scenes/SampleScene.unity": "c8b6b44a277d33ea563c95dc9386daebaea85bc4",
+    "docs/evidence/ZT-V01-WO-001.md": "ee00d1c243812afc463251dc53a23c437fbf8cb2",
+    "docs/evidence/ZT-V01-WO-001/CD-01.md": "0103654cc591b244c68fef71e78272f982495530",
+    "docs/evidence/ZT-V01-WO-001/checkpoint-delta.md": "f03b89081d05f00aae31e491b7d8bbf5c48d6e72"
   },
   "protected_unmerged_adr_sources": {
     "branch": "wo/zt-d01-wo-001-qa-01-exec",
@@ -115,5 +120,6 @@
     "note": "No Unity project files are changed in this planning branch. Re-fingerprint the full Unity project and critical source set before any execution."
   },
   "stale_rule": "Any main, Checkpoint, ADR, Scope, DoD, Architecture, Requirements, Visual Master, GDD/catalog, PR #28 or critical fingerprint change makes this planning lock stale. This planning lock is never valid as an execution lock.",
-  "execution_gate": "Owner approval of ADR-014; planning PR independently audited and merged; fresh execution lock on current main; separate explicit owner execution instruction; local licensed Editor preflight."
+  "execution_gate": "Owner approval of ADR-014; planning PR independently audited and merged; fresh execution lock on current main; separate explicit owner execution instruction; local licensed Editor preflight.",
+  "critical_git_blobs_count": 29
 }
