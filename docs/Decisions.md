@@ -6,3 +6,5 @@ ZT-ADR-010 APPROVED local development only: [official Unity interface](adr/ZT-AD
 ZT-ADR-013 OWNER-APPROVED FOR ZT-V01-WO-001 ONLY: local/offline, clearly labeled technical prototype using existing Personal Editor; no cloud, D01/D02/D09 completion, release or checkpoint promotion. Canonical D01/D02/D09 gates and ADR-009/010 remain unchanged.
 
 ZT-ADR-014 **OWNER APPROVED FOR PLANNING ADOPTION (2026-11-27; effective upon PR #32 integration); NOT AUTHORIZED FOR EXECUTION**: optional IMPORTANT local/offline visual refinement of the merged V01 technical prototype into a modest starter apartment with one recovery computer and one monitor. Applies only to ZT-V01-WO-002; remains outside the canonical D00–D19 DAG. Does not expand ZT-ADR-013, alter ADR-009/010/011/012, change D01/QA-01/D02/D09 status, promote the Checkpoint or authorize Unity/cloud/build/cost actions.
+
+ZT-ADR-015 OWNER APPROVED DIRECTION (2026-11-27), effective on audited admission integration: [local synthetic terminal](adr/ZT-ADR-015.md), only ZT-V01-WO-003; execution conditional on owner-submitted prompt and fresh lock/preflight. IMPORTANT optional, no canonical gate change or host bridge.
