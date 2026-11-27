@@ -73,7 +73,7 @@ As cinco capturas foram produzidas durante PlayMode local e inspecionadas visual
 | AC07 — ciclo de vida e leitura | PASS | Sessão local sem save, disponível somente Ready/Terminal; reset em desligamento/saída; regressões do fluxo permanecem cobertas. |
 | AC08 — compilação e suítes | PASS | `compilationFailed=false`; 65/65 EditMode e 13/13 PlayMode, sem skip/falha/inconclusivo. |
 | AC09 — capturas reais | PASS | Cinco PNGs PlayMode, dimensões e SHA-256 acima. |
-| AC10 — segurança, fontes, pacotes e CI | PASS local; CI remoto pendente no HEAD publicado | Fonte/lock/pacotes estáticos e `DOCS_VALIDATION_OK` conferidos; checks remotos exatos serão vinculados no corpo da PR após publicação. |
+| AC10 — segurança, fontes, pacotes e CI | PASS | Fonte/lock/pacotes estáticos e `DOCS_VALIDATION_OK` conferidos; os checks remotos exatos do HEAD corrente são registrados no corpo da PR. |
 | AC11 — operação e evidência | PASS | US$ 0, sem cloud/build/deploy; PR #28 inalterada; bundle e Checkpoint Delta proposto, não promovido. |
 
 **Disposição do executor:** `READY FOR INDEPENDENT AUDIT` após docs-validation local e os três checks remotos do HEAD final passarem. Isso não afirma auditoria independente APPROVED nem autoriza merge ou promoção de checkpoint.
