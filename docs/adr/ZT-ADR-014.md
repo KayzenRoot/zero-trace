@@ -1,6 +1,6 @@
 # ZT-ADR-014 | Starter apartment visual refinement for the local V01 prototype
 
-Status: **PROPOSED — OWNER APPROVAL REQUIRED; NOT AUTHORIZED FOR EXECUTION**
+Status: **OWNER APPROVED FOR PLANNING ADOPTION; EFFECTIVE ON PR #32 MERGE; NOT AUTHORIZED FOR EXECUTION**
 Date: 2026-11-27
 Applies to: ZT-V01-WO-002, issue #32, planning PR #32
 Classification: **IMPORTANT / OPTIONAL**, outside the canonical D00–D19 dependency DAG
@@ -15,7 +15,7 @@ ZT-V01-WO-001 is already integrated as a local/offline technical prototype. Its 
 
 The GDD v0.2.0 and mission catalog remain immutable. This ADR does not add a mission, mechanic, app, progression rule or release promise. The apartment layout details below are limited visual set dressing proposed for the already merged technical prototype.
 
-## Proposed decision
+## Decision
 
 Permit one optional, local/offline visual refinement under ZT-V01-WO-002:
 
@@ -42,20 +42,20 @@ The door, window and furniture are not interactive. No outside traversal, sleepi
 
 ## Execution gate
 
-This ADR is a proposal only. Execution requires all of the following:
+This ADR is owner-approved for planning adoption only, effective upon integration. Execution requires all of the following:
 1. Explicit owner approval of this ADR and the exact ZT-V01-WO-002 scope.
 2. Independent audit and squash integration of the planning PR.
 3. A fresh execution Context Lock on the then-current main, including all critical source and Unity project fingerprints.
 4. A separate explicit owner instruction to execute ZT-V01-WO-002.
 5. Successful local license/invocation preflight using the existing Editor and supported official local workflow.
 
-Merging this planning package, if later approved, does not itself authorize implementation. No automatic transition from planning to execution is permitted.
+Merging this planning package, as authorized by the owner, does not itself authorize implementation. No automatic transition from planning to execution is permitted.
 
 ## Consequences
 
-If approved and later executed, the existing technical room will communicate the normative modest starter-apartment direction more clearly while retaining the one-computer prototype. The result remains technical prototype content, not a canonical mission, D01 completion, D02 simulation, D09 vertical slice, release build or production-ready apartment asset.
+If separately authorized and later executed, the existing technical room will communicate the normative modest starter-apartment direction more clearly while retaining the one-computer prototype. The result remains technical prototype content, not a canonical mission, D01 completion, D02 simulation, D09 vertical slice, release build or production-ready apartment asset.
 
-If the proposal is not approved, the current generic room remains valid for the already merged technical prototype; no code or Unity changes are needed.
+If execution is not authorized, the current generic room remains valid for the already merged technical prototype; no code or Unity changes are needed.
 
 ## Alternatives
 
@@ -70,4 +70,4 @@ If later implemented, revert only the scoped room-factory and associated test ch
 
 ## Approval record
 
-No owner approval of ADR-014 adoption or ZT-V01-WO-002 execution is recorded. This document is a proposal prepared for review only.
+On 2026-11-27 the owner replied `autorizado` to the explicit request to approve ADR-014 and squash merge planning PR #32, which expressly excluded implementation. The owner approved planning adoption at reviewed HEAD `0743578ad34676bbefe12aa74145db84d3377b20`. This approval is effective upon audited squash integration; no execution authorization is recorded.
