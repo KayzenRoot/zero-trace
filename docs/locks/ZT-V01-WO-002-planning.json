@@ -1,0 +1,125 @@
+{
+  "wo": "ZT-V01-WO-002",
+  "status": "PLANNING_ONLY_NOT_EXECUTION_LOCK",
+  "classification": "IMPORTANT_OPTIONAL_OUTSIDE_D00_D19_DAG",
+  "repository": "KayzenRoot/zero-trace",
+  "tracking_issue": 32,
+  "planning_pr": 32,
+  "planning_branch": "docs/zt-v01-wo-002-apartment-planning",
+  "base_main_sha": "8b7a76ca4155a164f788fc9f417af54ab9a373d6",
+  "planning_snapshot_sha": "8b7a76ca4155a164f788fc9f417af54ab9a373d6",
+  "predecessor": {
+    "id": "ZT-V01-WO-001",
+    "pr": 30,
+    "merge_sha": "0bba2b6ccde6ed263a39b16d444b6094e5292483",
+    "state": "MERGED"
+  },
+  "governance": {
+    "ruleset_id": 28038825,
+    "name": "ZT-GOV-main",
+    "enforcement": "active",
+    "target": "refs/heads/main",
+    "bypass_actors": [],
+    "required_status_contexts": [
+      "docs-validation"
+    ],
+    "allowed_merge_methods": [
+      "squash"
+    ]
+  },
+  "main_check_readback": {
+    "sha": "8b7a76ca4155a164f788fc9f417af54ab9a373d6",
+    "checks": [
+      {
+        "name": "docs-validation",
+        "id": 140480725879,
+        "conclusion": "SUCCESS"
+      },
+      {
+        "name": "Socket Security: Project Report",
+        "id": 140480739188,
+        "conclusion": "SUCCESS"
+      }
+    ],
+    "not_observed": [
+      "Socket Security: Pull Request Alerts"
+    ],
+    "note": "Do not claim 3/3 on this merge SHA."
+  },
+  "checkpoint_state": {
+    "blob_sha": "6e65d473058f1b8854289af4cd05e34ee6f15edf",
+    "d01": "INCOMPLETE",
+    "qa01": "UNQUALIFIED_PLANNING_ONLY_EXECUTION_NOT_AUTHORIZED",
+    "d02": "BLOCKED",
+    "d09": "BLOCKED",
+    "promotion": "NOT_PROMOTED"
+  },
+  "protected_pr28": {
+    "number": 28,
+    "state": "OPEN",
+    "draft": true,
+    "branch": "wo/zt-d01-wo-001-qa-01-exec",
+    "base_main_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
+    "head_sha": "dd1ab1e2d2359e9a0d4a90cb68ca4ef1552beee1",
+    "no_mutation": true
+  },
+  "canonical_sources": {
+    "gdd": {
+      "path": "design/ZERO_TRACE_GDD_MASTER_v0.2.0.md",
+      "sha256": "4352e4a2bdf4f7d3925caaa6314ba1b550efe1c3f917ba05acd50aa940ea5ed1",
+      "git_blob": "0506c803c75c584e7f4bc6c5d975a6fe7690da08"
+    },
+    "mission_catalog": {
+      "path": "design/ZERO_TRACE_Mission_Catalog_v0.2.0.json",
+      "sha256": "836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365",
+      "git_blob": "f6f0d0b42d6d0b22ff608ba83d712e3cd9e8c9e4"
+    }
+  },
+  "critical_git_blobs": {
+    "AGENTS.md": "61146fc4e55d5c22aacd374e150767aa8b73964f",
+    "docs/README.md": "63bc325f043f4db59279d0d97238391e6962ff63",
+    "docs/ProjectOverview.md": "b79721d0e251d4065f711f424419368945379f35",
+    "docs/Checkpoint.md": "6e65d473058f1b8854289af4cd05e34ee6f15edf",
+    "docs/Decisions.md": "1dc86589fe44d30105e822d7b051effe535efd44",
+    "docs/Scope.md": "dc623557691b86dd077c3804c613436448d8b390",
+    "docs/DefinitionOfDone.md": "bfa7b5d55eb32d0d998c1bd78085655fc8dc06bb",
+    "docs/Architecture.md": "efe8d076ce539416dd8a6d809dc2b7500981089c",
+    "docs/Requirements.md": "d7d77cf0931201b4d6f26840a8a7a15a429dfca7",
+    "docs/TestPlan.md": "6da7e7da89da03a3ae54d4ff045d34d98bec00ce",
+    "docs/Security.md": "207be42224396ce68192f423d39554ae5547b502",
+    "docs/Deployment.md": "4b58cd9df6b05e3f95c6c256c92e3eafe87c2b9f",
+    "docs/Backlog.md": "43b2c1a67c8eaaa1a40a217ae51c7438523ec641",
+    "docs/Sources.md": "e43f413ddf3236422c2f28ef6f1c920d16d4c63e",
+    "docs/VisualSpec.md": "edbde793457fc344d60da1bbf8fdcf8b34cfe7d8",
+    "docs/VisualManifest.md": "9553f693344b5539d76c3f5b532720d608ae2b17",
+    "docs/ContextLock.md": "62f3a2d5a7db36d27e33a3983ad376220d52a1f8",
+    "docs/work-orders/V01/ZT-V01-WO-001.md": "a4372c92f6f9fa8a8119f21ab027381c479356df",
+    "docs/adr/ZT-ADR-009.md": "f58bfed3ae22b96014e06a6c2f926c1b5ddb86c4",
+    "docs/adr/ZT-ADR-010.md": "dfe73c67ec2a4fbf15fd35587639749bdeee475a",
+    "docs/adr/ZT-ADR-013.md": "6e5a6010682fbe47850ac910484d96ab834e4394",
+    "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeRoomFactory.cs": "7dffdcfbb3ae671c6d8f65eef23bc201e5bb9392",
+    "Assets/ZeroTrace/Presentation/Prototype/LocalFirstPlayableController.cs": "99e885abc9b5f2c42605cb58d7011ae6ebe231d7",
+    "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypePlayerMotor.cs": "d9ef215744823900b93dc2c4455867a2229d06cd",
+    "Assets/ZeroTrace/Tests/PlayMode/LocalFirstPlayablePlayModeTests.cs": "51c406f71c5af318c1292ec8ea1f1c5bb9287e05",
+    "Assets/Scenes/SampleScene.unity": "c8b6b44a277d33ea563c95dc9386daebaea85bc4",
+    "docs/evidence/ZT-V01-WO-001.md": "ee00d1c243812afc463251dc53a23c437fbf8cb2",
+    "docs/evidence/ZT-V01-WO-001/CD-01.md": "0103654cc591b244c68fef71e78272f982495530",
+    "docs/evidence/ZT-V01-WO-001/checkpoint-delta.md": "f03b89081d05f00aae31e491b7d8bbf5c48d6e72"
+  },
+  "protected_unmerged_adr_sources": {
+    "branch": "wo/zt-d01-wo-001-qa-01-exec",
+    "head_sha": "dd1ab1e2d2359e9a0d4a90cb68ca4ef1552beee1",
+    "files": {
+      "docs/adr/ZT-ADR-011.md": "41eb6809ef66876b015ceee16d8dc75b74d40168",
+      "docs/adr/ZT-ADR-012.md": "c5751a37d94e40c26fa72fdb3deb8e89ea673e85"
+    },
+    "note": "These are branch-only protected sources in PR #28; do not mutate or copy into main."
+  },
+  "project_files": {
+    "scope": "baseline only",
+    "note": "No Unity project files are changed in this planning branch. Re-fingerprint the full Unity project and critical source set before any execution."
+  },
+  "stale_rule": "Any main, Checkpoint, ADR, Scope, DoD, Architecture, Requirements, Visual Master, GDD/catalog, PR #28 or critical fingerprint change makes this planning lock stale. This planning lock is never valid as an execution lock.",
+  "execution_gate": "Owner approval of ADR-014; planning PR independently audited and merged; fresh execution lock on current main; separate explicit owner execution instruction; local licensed Editor preflight.",
+  "critical_git_blobs_count": 29
+}

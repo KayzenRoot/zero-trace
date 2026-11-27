@@ -24,3 +24,8 @@ D00 design/governance approved; effective on main after PR #1 integration. D01 P
 | ZT-D17-WO-001 | M23c/M24/M25/M28/M29/M31/M33 | Full content and endgame | D16 | Luna 6 | ELEVATED | [#19](https://github.com/KayzenRoot/zero-trace/issues/19) |
 | ZT-D18-WO-001 | M34/M35 | V1.0 final qualification | D17 | Sol 6.2 | HIGH_ASSURANCE | [#20](https://github.com/KayzenRoot/zero-trace/issues/20) |
 | ZT-D19-WO-001 | M30c | Conditional Steam Community Market | D15 + external gate | Sol 6.2 | HIGH_ASSURANCE | [#21](https://github.com/KayzenRoot/zero-trace/issues/21) |
+
+## Optional V01 technical-prototype refinements (outside the canonical D00–D19 DAG)
+
+- **ZT-V01-WO-002 — Starter apartment visual refinement** — Issue #32; planning PR #32. Classification: **IMPORTANT / OPTIONAL**, not NECESSARY. The proposal aligns the already merged local technical prototype with the modest one-monitor starter-apartment direction in Visual Master v0.2.0. It is not a release gate, does not add a D00–D19 node, and does not satisfy or replace D01 QA-01. Execution is not authorized; see ZT-ADR-014 (owner-approved for planning adoption; effective upon PR #32 integration) and docs/work-orders/V01/ZT-V01-WO-002.md.
+- Canonical D01/QA-01 sequencing and the D00–D19 dependency graph above remain unchanged. D01 remains incomplete; D02 and D09 remain blocked.
