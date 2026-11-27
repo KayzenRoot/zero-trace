@@ -1,0 +1,464 @@
+{
+  "work_order": "ZT-V01-WO-002",
+  "status": "EXECUTION_LOCK_ACTIVE",
+  "classification": "IMPORTANT_OPTIONAL_OUTSIDE_D00_D19_DAG",
+  "repository": "KayzenRoot/zero-trace",
+  "base_main_sha": "79c9f0f55a520736b47ce7cba64d8c70bd591682",
+  "execution_branch": "feat/zt-v01-wo-002-starter-apartment",
+  "locked_at": "2026-11-27T10:44:14-03:00",
+  "associated_issue": {
+    "number": 32,
+    "state": "MERGED_WITH_PLANNING_PR",
+    "url": "https://github.com/KayzenRoot/zero-trace/issues/32",
+    "note": "Issue #32 is the integrated planning tracking item; this execution follows a separate direct owner instruction and does not reopen/close the planning item."
+  },
+  "owner_execution_authorization": {
+    "source": "Owner-supplied ZT-V01-WO-002 execution prompt, 2026-11-27",
+    "scope": "Local/offline modest starter apartment refinement and its evidence/tests only."
+  },
+  "planning_admission": {
+    "adr": "docs/adr/ZT-ADR-014.md",
+    "adr_blob": "8a2872b8217d39b7c636f66fd8292f47fad8311a",
+    "planning_pr": 32,
+    "planning_pr_head": "5ba041ac643314a0bf6825ced6459572a3df6ffb",
+    "planning_pr_state": "MERGED",
+    "planning_audit_record": "Auditoria de segunda passada, issue-comment 7216415900, verdict APPROVED PARA REVISÃO DO PROPRIETÁRIO; owner approval and squash integration followed.",
+    "planning_work_order": "docs/work-orders/V01/ZT-V01-WO-002.md",
+    "work_order_blob": "475f0f152ccff499ee20219d74e3131249d11d6e"
+  },
+  "protected_pr28": {
+    "number": 28,
+    "state": "OPEN",
+    "draft": true,
+    "branch": "wo/zt-d01-wo-001-qa-01-exec",
+    "base_sha": "1b72c6773fc9edd39c44239ec127a75d7ca9d158",
+    "head_sha": "dd1ab1e2d2359e9a0d4a90cb68ca4ef1552beee1",
+    "no_mutation": true,
+    "locked_adr_blobs": {
+      "docs/adr/ZT-ADR-011.md": "41eb6809ef66876b015ceee16d8dc75b74d40168",
+      "docs/adr/ZT-ADR-012.md": "c5751a37d94e40c26fa72fdb3deb8e89ea673e85"
+    }
+  },
+  "governance": {
+    "ruleset_id": 28038825,
+    "name": "ZT-GOV-main",
+    "enforcement": "active",
+    "target": "refs/heads/main",
+    "bypass_actors": [],
+    "current_user_can_bypass": "never",
+    "rules": {
+      "deletion": true,
+      "non_fast_forward": true,
+      "required_linear_history": true,
+      "pull_request": {
+        "required_approving_review_count": 0,
+        "dismiss_stale_reviews_on_push": true,
+        "required_review_thread_resolution": true,
+        "allowed_merge_methods": [
+          "squash"
+        ]
+      },
+      "required_status_checks": [
+        "docs-validation"
+      ]
+    }
+  },
+  "checkpoint": {
+    "blob_sha": "6e65d473058f1b8854289af4cd05e34ee6f15edf",
+    "d01": "INCOMPLETE",
+    "qa01": "UNQUALIFIED_NOT_EXECUTION_AUTHORIZED",
+    "d02": "BLOCKED",
+    "d09": "BLOCKED",
+    "promotion": "NOT_PROMOTED"
+  },
+  "canonical_sources": {
+    "gdd": {
+      "path": "design/ZERO_TRACE_GDD_MASTER_v0.2.0.md",
+      "git_blob": "0506c803c75c584e7f4bc6c5d975a6fe7690da08",
+      "sha256": "4352e4a2bdf4f7d3925caaa6314ba1b550efe1c3f917ba05acd50aa940ea5ed1",
+      "expected_sha256": "4352e4a2bdf4f7d3925caaa6314ba1b550efe1c3f917ba05acd50aa940ea5ed1"
+    },
+    "mission_catalog": {
+      "path": "design/ZERO_TRACE_Mission_Catalog_v0.2.0.json",
+      "git_blob": "f6f0d0b42d6d0b22ff608ba83d712e3cd9e8c9e4",
+      "sha256": "836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365",
+      "expected_sha256": "836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365"
+    }
+  },
+  "critical_git_blobs": {
+    "AGENTS.md": "61146fc4e55d5c22aacd374e150767aa8b73964f",
+    "docs/README.md": "63bc325f043f4db59279d0d97238391e6962ff63",
+    "docs/ProjectOverview.md": "b79721d0e251d4065f711f424419368945379f35",
+    "docs/Checkpoint.md": "6e65d473058f1b8854289af4cd05e34ee6f15edf",
+    "docs/Decisions.md": "6ae3d654712f424a5681bb10192f755961e2b38c",
+    "docs/Scope.md": "dc623557691b86dd077c3804c613436448d8b390",
+    "docs/DefinitionOfDone.md": "bfa7b5d55eb32d0d998c1bd78085655fc8dc06bb",
+    "docs/Architecture.md": "efe8d076ce539416dd8a6d809dc2b7500981089c",
+    "docs/Requirements.md": "d7d77cf0931201b4d6f26840a8a7a15a429dfca7",
+    "docs/TestPlan.md": "6da7e7da89da03a3ae54d4ff045d34d98bec00ce",
+    "docs/Security.md": "207be42224396ce68192f423d39554ae5547b502",
+    "docs/Deployment.md": "4b58cd9df6b05e3f95c6c256c92e3eafe87c2b9f",
+    "docs/Backlog.md": "2301f1eb0b06ec7852bba9e8d7e424e7532a84d7",
+    "docs/Sources.md": "e43f413ddf3236422c2f28ef6f1c920d16d4c63e",
+    "docs/VisualSpec.md": "edbde793457fc344d60da1bbf8fdcf8b34cfe7d8",
+    "docs/VisualManifest.md": "9553f693344b5539d76c3f5b532720d608ae2b17",
+    "docs/ContextLock.md": "62f3a2d5a7db36d27e33a3983ad376220d52a1f8",
+    "docs/work-orders/V01/ZT-V01-WO-001.md": "a4372c92f6f9fa8a8119f21ab027381c479356df",
+    "docs/adr/ZT-ADR-009.md": "f58bfed3ae22b96014e06a6c2f926c1b5ddb86c4",
+    "docs/adr/ZT-ADR-010.md": "dfe73c67ec2a4fbf15fd35587639749bdeee475a",
+    "docs/adr/ZT-ADR-013.md": "6e5a6010682fbe47850ac910484d96ab834e4394",
+    "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeRoomFactory.cs": "7dffdcfbb3ae671c6d8f65eef23bc201e5bb9392",
+    "Assets/ZeroTrace/Presentation/Prototype/LocalFirstPlayableController.cs": "99e885abc9b5f2c42605cb58d7011ae6ebe231d7",
+    "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypePlayerMotor.cs": "d9ef215744823900b93dc2c4455867a2229d06cd",
+    "Assets/ZeroTrace/Tests/PlayMode/LocalFirstPlayablePlayModeTests.cs": "51c406f71c5af318c1292ec8ea1f1c5bb9287e05",
+    "Assets/Scenes/SampleScene.unity": "c8b6b44a277d33ea563c95dc9386daebaea85bc4",
+    "docs/evidence/ZT-V01-WO-001.md": "ee00d1c243812afc463251dc53a23c437fbf8cb2",
+    "docs/evidence/ZT-V01-WO-001/CD-01.md": "0103654cc591b244c68fef71e78272f982495530",
+    "docs/evidence/ZT-V01-WO-001/checkpoint-delta.md": "f03b89081d05f00aae31e491b7d8bbf5c48d6e72",
+    "docs/adr/ZT-ADR-014.md": "8a2872b8217d39b7c636f66fd8292f47fad8311a",
+    "docs/work-orders/V01/ZT-V01-WO-002.md": "475f0f152ccff499ee20219d74e3131249d11d6e",
+    "docs/evidence/ZT-V01-WO-002-planning.md": "61939562514b0ccdf7a590a38708352e64193b5a",
+    "docs/locks/ZT-V01-WO-002-planning.json": "be614594a7f629a58f713dc26a1b62ce48aad6fb"
+  },
+  "unity_project": {
+    "tracked_file_count": 141,
+    "all_tracked_file_blobs": {
+      "Assets/AddressableAssetsData.meta": "3582e4b27101ed2422a643a13c48cc981ab63a5c",
+      "Assets/AddressableAssetsData/AddressableAssetSettings.asset": "9da1f7e4c4b2143418dc977c7748fa06633c6f6c",
+      "Assets/AddressableAssetsData/AddressableAssetSettings.asset.meta": "abe5a49e888c2902bfb84d25ca37039e946b44cc",
+      "Assets/AddressableAssetsData/AssetGroupTemplates.meta": "1524e3d1d7349964fd2bfb1189e9506ca79a7d70",
+      "Assets/AddressableAssetsData/AssetGroupTemplates/Packed Assets.asset": "74ad5e2bef35db19c032d5d7a1634436fc383d95",
+      "Assets/AddressableAssetsData/AssetGroupTemplates/Packed Assets.asset.meta": "fcb7148b9b3cde3b0413b7194cef1a66e34e72a5",
+      "Assets/AddressableAssetsData/AssetGroups.meta": "b7f7b1ac290e03e56a56ad3367a2012efd0e2b57",
+      "Assets/AddressableAssetsData/AssetGroups/Default Local Group.asset": "818b3111051f4d261ee62515c9e2b5cdaf771bec",
+      "Assets/AddressableAssetsData/AssetGroups/Default Local Group.asset.meta": "f7c1f013773f6bbd33b79824d4a922b4532a3724",
+      "Assets/AddressableAssetsData/AssetGroups/Localization-Locales.asset": "b6b4f1be40f0eb2b7e1b61b949ada89a8ab08df6",
+      "Assets/AddressableAssetsData/AssetGroups/Localization-Locales.asset.meta": "eb4751bc8198fad03b48818e0267a79fcae81df9",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas.meta": "141155d2e0dc93915c220e2aa73812c209fe10d4",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_BundledAssetGroupSchema.asset": "ae579ecf51623cd04928a36bb0970a8e6785e1a4",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_BundledAssetGroupSchema.asset.meta": "22f09b32094987a2a5aa29f110f9b194c5bee866",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_ContentUpdateGroupSchema.asset": "c5c702804ced7d2c5cefcb9f8fd2d8ba3a07d29c",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_ContentUpdateGroupSchema.asset.meta": "efedd121d849f9024ea1db2eb19e8f7ed59401c3",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Localization-Locales_BundledAssetGroupSchema.asset": "3fb75283236e19ab9ad6ddbe1f188c12d37054ec",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Localization-Locales_BundledAssetGroupSchema.asset.meta": "3eb4f530b65cf061d604b8971cb317ab90c672f0",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Localization-Locales_ContentUpdateGroupSchema.asset": "8d11f95ad05d5c5075eaf4927817dbd50abfa52d",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Localization-Locales_ContentUpdateGroupSchema.asset.meta": "b46d7e4351c93705c6b5264f897a0aaf49e92e72",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Localization-Locales_LocalizationGroupSchema.asset": "ce58e23317299a31c0c14530f41d7ca23d5197f6",
+      "Assets/AddressableAssetsData/AssetGroups/Schemas/Localization-Locales_LocalizationGroupSchema.asset.meta": "191d64c3de02a04aa86f8abd2047743ecf55f13b",
+      "Assets/AddressableAssetsData/DataBuilders.meta": "da15bc34bfabae0ba2105309f014aae965384a3c",
+      "Assets/AddressableAssetsData/DataBuilders/BuildScriptFastMode.asset": "12ab1d2254846dcd89b68660b014a7866d7d5275",
+      "Assets/AddressableAssetsData/DataBuilders/BuildScriptFastMode.asset.meta": "3b820d833e693e6e7258a70150f984e2e83dff0e",
+      "Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedMode.asset": "d8c59fdd3b867652375955e1e0263a541c446a95",
+      "Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedMode.asset.meta": "f65f9645cd7a4a7ce70832284684e474360f767b",
+      "Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedPlayMode.asset": "d566c2c919c0453e33c2bd6dc94623aa0ac0559f",
+      "Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedPlayMode.asset.meta": "1f7246348028bde35871dca3992e99e4ae41c95c",
+      "Assets/AddressableAssetsData/DefaultObject.asset": "fd54956cec1fcadaaa2c75eade303c69879e4c5b",
+      "Assets/AddressableAssetsData/DefaultObject.asset.meta": "85020b58c768b357e2ee5c4b800fea146416d13c",
+      "Assets/DefaultVolumeProfile.asset": "5393bfe5c1236a57fd081f556b15a983415656b4",
+      "Assets/DefaultVolumeProfile.asset.meta": "29a6dd02e5fe33dbaa29628700773b7ff2ffd137",
+      "Assets/Scenes.meta": "e59fb4597f9d7d692cc64eb96bd604a2b1ac3bdb",
+      "Assets/Scenes/SampleScene.unity": "c8b6b44a277d33ea563c95dc9386daebaea85bc4",
+      "Assets/Scenes/SampleScene.unity.meta": "952bd1e9e110583d94b471a30ff4ddd69f4aee7d",
+      "Assets/UI Toolkit.meta": "616b630646cbb74cf1d69ea5eef17e4667a946aa",
+      "Assets/UI Toolkit/UnityThemes.meta": "4a228563244a980130c691b49bfa3b38bafeff06",
+      "Assets/UI Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss": "1056e07ed4f47c0353c25119d72f3d4e3493d578",
+      "Assets/UI Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss.meta": "256599cda02c94001fa3d01444438ccf3275f3c0",
+      "Assets/UniversalRenderPipelineGlobalSettings.asset": "625615bfb3a6dd1d0126bcbf6baf8d90c5430c0e",
+      "Assets/UniversalRenderPipelineGlobalSettings.asset.meta": "d2e31bd75d1fd8c3a30e58ff204fe0a72ab746ea",
+      "Assets/ZeroTrace.meta": "809dff5e6970709d3a1202cd775fbe202f509554",
+      "Assets/ZeroTrace/Domain.meta": "c55a3c47726603a2e671e2371f15af0e25313c16",
+      "Assets/ZeroTrace/Domain/LocalPrototypeFlow.cs": "9ae0d0b801fcb6785fab25b88d13498eb93dc988",
+      "Assets/ZeroTrace/Domain/LocalPrototypeFlow.cs.meta": "2ecf543f20c645728774a6dcbcf64eab5ccd9cf7",
+      "Assets/ZeroTrace/Domain/StableIdentifier.cs": "e17d4cde1d51c1c655357f8b9f88ca570f5b0f8d",
+      "Assets/ZeroTrace/Domain/StableIdentifier.cs.meta": "42881ed04c30ecc57938a72e25f96a433ab53bcc",
+      "Assets/ZeroTrace/Domain/ZeroTrace.Domain.asmdef": "ce59233bab69376446f8f33cc123be47acf37243",
+      "Assets/ZeroTrace/Domain/ZeroTrace.Domain.asmdef.meta": "f87a91c18b1d9c2c7d0d8527567336e00336ba1e",
+      "Assets/ZeroTrace/Presentation.meta": "0cfab93ce49bec6fb37a96b3abe54400cb5bb38c",
+      "Assets/ZeroTrace/Presentation/Prototype.meta": "5473a19d4904683de495a7b0a47dac5720f2d3f8",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalFirstPlayableController.cs": "99e885abc9b5f2c42605cb58d7011ae6ebe231d7",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalFirstPlayableController.cs.meta": "7b7253fc8cd85c1fb0e9bba0aa55f2cf2b988759",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypePlayerMotor.cs": "d9ef215744823900b93dc2c4455867a2229d06cd",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypePlayerMotor.cs.meta": "0e5b27f84ae636b8fe3699121ca962035164eed3",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeProgressStore.cs": "26052f8748eb1d71c4ffc6ca77c2ec5bc988400f",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeProgressStore.cs.meta": "81695363debe0acbd18f1ebdb3ba389aca14856b",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeRoomFactory.cs": "7dffdcfbb3ae671c6d8f65eef23bc201e5bb9392",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeRoomFactory.cs.meta": "426537e306e18e6da9489296bd83b3728c12dce2",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeText.cs": "14a74045c0d3ca43fc715b0f5afe02862332655f",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeText.cs.meta": "4116cc337ee00e813faea37a0a0f0fa414319c49",
+      "Assets/ZeroTrace/Presentation/Resources.meta": "0085d87eabb0e227cf2e19bd1cb8ddec72c01597",
+      "Assets/ZeroTrace/Presentation/Resources/Localization.meta": "190f6f44f4a9eb318940c7c8dc25afbc61d19556",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Locales.meta": "ed5851ae382da0ea791dbf89013b62213a49e39c",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Locales/Locale-en-US.asset": "cf3330ce4936f028e2ba51960576ef606c104907",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Locales/Locale-en-US.asset.meta": "ad0ca2087e0d3d38033080035e4ad8d1368eee85",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Locales/Locale-pt-BR.asset": "731674c47300b9dd40756f647abb208c29af5898",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Locales/Locale-pt-BR.asset.meta": "7f2726a1fee610719835281f69bad5cfbb9d668c",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Tables.meta": "a59c539d32d84bdaaad1b7fdb21c456588da6f41",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Tables/Startup-Shared.asset": "230eca45623186e0ae2a94f7e31cc7ee9a7f0938",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Tables/Startup-Shared.asset.meta": "e51f9048989a47e7c3eecfeee7c87e8a893f6ccb",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Tables/Startup-en-US.asset": "f2762a87e7a3c61925a4fd9048b58525b2115142",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Tables/Startup-en-US.asset.meta": "546889129abc4a295e43f7fd67c7fc40eeb954a7",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Tables/Startup-pt-BR.asset": "8cf609b7b3c2b044d4c86e4eeb0fff858d1fad82",
+      "Assets/ZeroTrace/Presentation/Resources/Localization/Tables/Startup-pt-BR.asset.meta": "d3a10dfd65e1ee9af20e06713cfa79212af64e4d",
+      "Assets/ZeroTrace/Presentation/Startup.meta": "5b4f997be373128a0a53a02159565c353eac4262",
+      "Assets/ZeroTrace/Presentation/Startup/Startup.uss": "f8bc558fe171a4848b44ae68a2efe7b240132a37",
+      "Assets/ZeroTrace/Presentation/Startup/Startup.uss.meta": "42af070695ac7cc8fc6ccfc6631de7d9ad24519f",
+      "Assets/ZeroTrace/Presentation/Startup/Startup.uxml": "56c4fdc9b8071d42c0e93ec81fa18186abb8cbab",
+      "Assets/ZeroTrace/Presentation/Startup/Startup.uxml.meta": "7914bfe5a6dd111d7471e2c7a16d0a051b9c3df6",
+      "Assets/ZeroTrace/Presentation/Startup/StartupController.cs": "842ccba3fc700d6e1b89ba6aab58ceb2b34d2ca8",
+      "Assets/ZeroTrace/Presentation/Startup/StartupController.cs.meta": "385bd297d1fbc2188b62a0b584b211ee2230e616",
+      "Assets/ZeroTrace/Presentation/Startup/StartupPanelSettings.asset": "215fe10694cea90f10732d6f537dda7634337fd2",
+      "Assets/ZeroTrace/Presentation/Startup/StartupPanelSettings.asset.meta": "5d30bec19d4d1af9dc01697013b0b479a8c602b0",
+      "Assets/ZeroTrace/Presentation/ZeroTrace.Presentation.asmdef": "c50dbedfa4358b35ab70486b88eb505459846e8a",
+      "Assets/ZeroTrace/Presentation/ZeroTrace.Presentation.asmdef.meta": "c7387c1a82cae64cfae721cb1360e260793da6df",
+      "Assets/ZeroTrace/Tests.meta": "dce5a83434b16aabe131aedccedc569ecbb0e006",
+      "Assets/ZeroTrace/Tests/EditMode.meta": "1b0c8a4461ec0f2b61d47602e151904b7ad52919",
+      "Assets/ZeroTrace/Tests/EditMode/LocalPrototypeFlowTests.cs": "824542437fbb402cb257a98aa0b4f507aaa092b6",
+      "Assets/ZeroTrace/Tests/EditMode/LocalPrototypeFlowTests.cs.meta": "df32016ff917da6546f1b43c7a0c01a283789c31",
+      "Assets/ZeroTrace/Tests/EditMode/Presentation.meta": "a9242a74c9bdca7e007d9842d491a49460605cef",
+      "Assets/ZeroTrace/Tests/EditMode/Presentation/LocalPrototypeProgressStoreTests.cs": "a610de6a0a61329f99c12b54d8c3855adb46cefa",
+      "Assets/ZeroTrace/Tests/EditMode/Presentation/LocalPrototypeProgressStoreTests.cs.meta": "9bce18013aa6e0cb1b6b3696b862ed3e898c9c0c",
+      "Assets/ZeroTrace/Tests/EditMode/Presentation/StartupLocalizationTests.cs": "d19d34cb227d30fa35625fae5842684857f650f3",
+      "Assets/ZeroTrace/Tests/EditMode/Presentation/StartupLocalizationTests.cs.meta": "076b0abccc0c3ca0121bbe859dcafdde0a264d72",
+      "Assets/ZeroTrace/Tests/EditMode/Presentation/ZeroTrace.Presentation.Tests.EditMode.asmdef": "c39b7346013a3b6657c8bf50273c6274fc274688",
+      "Assets/ZeroTrace/Tests/EditMode/Presentation/ZeroTrace.Presentation.Tests.EditMode.asmdef.meta": "cf7468bb7f047f8baa936f87aaddb8e0aa9eac6d",
+      "Assets/ZeroTrace/Tests/EditMode/StableIdentifierTests.cs": "ac8004fd2676bcc8c8337fc0f7a2cb0cedf94dca",
+      "Assets/ZeroTrace/Tests/EditMode/StableIdentifierTests.cs.meta": "2ab80a8d87c48cce3f0e4786d3945dcd36a30829",
+      "Assets/ZeroTrace/Tests/EditMode/ZeroTrace.Domain.Tests.asmdef": "e409427f074dda8e4950d04314f8a265429e0b13",
+      "Assets/ZeroTrace/Tests/EditMode/ZeroTrace.Domain.Tests.asmdef.meta": "c074ff03df3bf4eaa83de98c287ed923ae80d915",
+      "Assets/ZeroTrace/Tests/PlayMode.meta": "0a96676de2f20c1fd01f7ad89b6a474cb9a3c7dc",
+      "Assets/ZeroTrace/Tests/PlayMode/LocalFirstPlayablePlayModeTests.cs": "51c406f71c5af318c1292ec8ea1f1c5bb9287e05",
+      "Assets/ZeroTrace/Tests/PlayMode/LocalFirstPlayablePlayModeTests.cs.meta": "d7bcfe9573f9f471230fdae9eedaf9954ab80f49",
+      "Assets/ZeroTrace/Tests/PlayMode/StartupFlowPlayModeTests.cs": "9b0528775b4cdd36466d328f23fc5e08d4667ca2",
+      "Assets/ZeroTrace/Tests/PlayMode/StartupFlowPlayModeTests.cs.meta": "fd27b89dc5c707e04b8b9c3cbf69d630817871eb",
+      "Assets/ZeroTrace/Tests/PlayMode/ZeroTrace.Presentation.Tests.PlayMode.asmdef": "0b57875ec0127053ef92de4fc638bedffb91ef04",
+      "Assets/ZeroTrace/Tests/PlayMode/ZeroTrace.Presentation.Tests.PlayMode.asmdef.meta": "5c28def601542e1a57c3a92885e1a71c81ebff3f",
+      "Assets/ZeroTracePipeline.asset": "f531f7ad2f3c056999ec042cdd3768c9a0680dec",
+      "Assets/ZeroTracePipeline.asset.meta": "4332fc7847ea3c0dda7644921c7b40b25434adbe",
+      "Assets/ZeroTracePipeline_Renderer.asset": "3e3189523e8edbafaf364b1928eec8555dbed3c2",
+      "Assets/ZeroTracePipeline_Renderer.asset.meta": "fdb680dfabb93ab10bb566d8693104616592c659",
+      "Packages/manifest.json": "7b309a45201057f0df90aaf046ce0f6236f00f49",
+      "Packages/packages-lock.json": "9a9e2b3a2b8fa6b55538e2c65b8c3441bc1823f8",
+      "ProjectSettings/AudioManager.asset": "07ebfb05df3b58b4a596eac64cd19529d36ce565",
+      "ProjectSettings/ClusterInputManager.asset": "e7886b266a005f4d9d80f2fef8d1649dcfd3ed2b",
+      "ProjectSettings/DynamicsManager.asset": "cdc1f3eab509699e163f46fd14f0e81eb3a5dbaf",
+      "ProjectSettings/EditorBuildSettings.asset": "2a287baf009db5779ddf0d6cf946be5d9d4aa315",
+      "ProjectSettings/EditorSettings.asset": "878c4cb8d33ea203c002885f3f658b5c52d5e3dd",
+      "ProjectSettings/GraphicsSettings.asset": "0d1e1e9192ba8f2c2050b5395433bdad56ae2e7a",
+      "ProjectSettings/InputManager.asset": "6a65192d0db6bb1b18f85ee2cdb43f8dd7005e81",
+      "ProjectSettings/MemorySettings.asset": "5b5facecace9276319b6e497953ab0429de65b61",
+      "ProjectSettings/MultiplayerManager.asset": "c19bcd739da8e3b9c9ac37f7890c2db649ee2069",
+      "ProjectSettings/NavMeshAreas.asset": "3b0b7c3d183abdd300112f56965916ef11667f54",
+      "ProjectSettings/PackageManager.policy": "8efafa8f7565f5eb5f0fe16df5070bf1731e58d7",
+      "ProjectSettings/PackageManagerSettings.asset": "112a053b53f9f9d1c708c157eb7f7126c2eb79bd",
+      "ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json": "3c7b4c18bb0d72369422dce1472bb7d54e7024f2",
+      "ProjectSettings/Physics2DSettings.asset": "47880b1c8c8e3b6306101004bb9826527d80e05e",
+      "ProjectSettings/PresetManager.asset": "67a94daefe2e6bce3ec73546ad7cda94f702ad22",
+      "ProjectSettings/ProjectSettings.asset": "d65cb4af9d393442acde5382c06229a726a90f42",
+      "ProjectSettings/ProjectVersion.txt": "37f548b780b8c4f890bbe97447d6f6aa1b175836",
+      "ProjectSettings/QualitySettings.asset": "1fa98fc890cf9ec9a8bed3a0cfa8f061dcd93069",
+      "ProjectSettings/ShaderGraphSettings.asset": "e33ca2483e09575b650732f828e146bd5e000234",
+      "ProjectSettings/TagManager.asset": "1c92a7840ec11895c76785f65d949a3d20d53355",
+      "ProjectSettings/TimeManager.asset": "558a017e1f50b2db73414a1abad3c033922774f8",
+      "ProjectSettings/URPProjectSettings.asset": "61fe00df374ad31413f3cb35ecafa8c4ab7c8887",
+      "ProjectSettings/UnityConnectSettings.asset": "029ad8b9e7fa7b57c7e3b4b8c29a8e6a57f906be",
+      "ProjectSettings/VFXManager.asset": "3a95c98bec50cf72538061fd26eee95398f72128",
+      "ProjectSettings/VersionControlSettings.asset": "dca288142fc043d5a749e9058fe625505008834f",
+      "ProjectSettings/XRSettings.asset": "482590c196f7a82116679f58176b9d1aff21d7f9"
+    },
+    "critical_paths": [
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeRoomFactory.cs",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalFirstPlayableController.cs",
+      "Assets/ZeroTrace/Presentation/Prototype/LocalPrototypePlayerMotor.cs",
+      "Assets/ZeroTrace/Tests/PlayMode/LocalFirstPlayablePlayModeTests.cs",
+      "Assets/Scenes/SampleScene.unity",
+      "Packages/manifest.json",
+      "Packages/packages-lock.json",
+      "ProjectSettings/ProjectVersion.txt"
+    ],
+    "package_manifest_blob": "7b309a45201057f0df90aaf046ce0f6236f00f49",
+    "package_lock_blob": "9a9e2b3a2b8fa6b55538e2c65b8c3441bc1823f8",
+    "project_version_blob": "37f548b780b8c4f890bbe97447d6f6aa1b175836",
+    "direct_packages": {
+      "com.unity.localization": {
+        "manifest": "1.5.14",
+        "resolved": "1.5.14"
+      },
+      "com.unity.pipeline": {
+        "manifest": "1.0.1",
+        "resolved": "1.0.1"
+      },
+      "com.unity.render-pipelines.universal": {
+        "manifest": "17.3.0",
+        "resolved": "17.3.0"
+      },
+      "com.unity.modules.accessibility": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.adaptiveperformance": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.ai": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.androidjni": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.animation": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.assetbundle": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.audio": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.cloth": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.director": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.imageconversion": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.imgui": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.jsonserialize": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.particlesystem": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.physics": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.physics2d": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.screencapture": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.terrain": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.terrainphysics": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.tilemap": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.ui": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.uielements": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.umbra": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.unityanalytics": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.unitywebrequest": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.unitywebrequestassetbundle": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.unitywebrequestaudio": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.unitywebrequesttexture": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.unitywebrequestwww": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.vectorgraphics": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.vehicles": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.video": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.vr": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.wind": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      },
+      "com.unity.modules.xr": {
+        "manifest": "1.0.0",
+        "resolved": "1.0.0"
+      }
+    },
+    "editor_version_expected": "6000.3.29f1"
+  },
+  "local_preexisting_untracked": {
+    "path": "ProjectSettings/SceneTemplateSettings.json",
+    "present": true,
+    "sha256": "bb9098b3bfcde78d93e264b96f7b77b5430e64e8c57a7aad7f5a5d9c3945e16a",
+    "action": "preserve and exclude from all commits; not part of origin/main"
+  },
+  "stale_lock_criteria": [
+    "origin/main moves from base_main_sha before the execution branch is published or critical source files differ from these fingerprints",
+    "Checkpoint, Decisions, Scope, DefinitionOfDone, Architecture, Requirements, TestPlan, Security, Deployment, Sources, VisualSpec, ADR-009/010/013/014, WO-002, GDD or mission catalog changes",
+    "PR #28 is no longer open/draft at the exact protected HEAD and base recorded here",
+    "Editor version, package manifest/lock, one-Editor state or local license evidence changes",
+    "issue/PR governance, ruleset or required checks materially change"
+  ],
+  "operational_restrictions": [
+    "One existing licensed interactive Unity Editor; no activation or changed terms",
+    "No Unity Cloud/UBA/DevOps, trial, payment, credentials, external assets, packages, tools or services",
+    "No build, deployment, publication, distribution, merge, checkpoint promotion or change to PR #28",
+    "No D01, QA-01, D02 or D09 completion or status changes",
+    "No gameplay or changes to the computer lifecycle, desktop/apps, domain, localization, progress store or save schema"
+  ],
+  "stop_gates": [
+    "Any license, terms, cloud, trial or payment prompt",
+    "Need for a new package, tool, asset, account, service, credential or cost",
+    "Existing test failure or serious regression",
+    "Inability to retain one monitor, computer interaction ray, safe room bounds or camera restoration",
+    "High or critical defect or evidence gap that cannot be resolved in this Work Order"
+  ],
+  "fingerprint_counts": {
+    "critical_git_blobs": 33,
+    "unity_project_files": 141
+  }
+}
