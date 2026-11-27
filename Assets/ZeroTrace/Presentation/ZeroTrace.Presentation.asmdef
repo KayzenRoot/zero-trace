@@ -1,7 +1,7 @@
 {
   "name": "ZeroTrace.Presentation",
   "rootNamespace": "ZeroTrace.Presentation",
-  "references": ["Unity.Localization"],
+  "references": ["Unity.Localization", "ZeroTrace.Domain"],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
