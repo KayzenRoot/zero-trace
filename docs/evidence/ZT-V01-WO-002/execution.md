@@ -1,68 +1,95 @@
-# ZT-V01-WO-002 — Evidence Bundle de execução
+# ZT-V01-WO-002 — Evidence Bundle
 
-**Estado:** PREFLIGHT LOCAL CONCLUÍDO; implementação e validação visual ainda pendentes.
+**Estado:** execução local concluída; PR #33 continua em draft e aguarda auditoria independente. Este registro não declara aprovação independente nem autoriza merge.
 **Data:** 2026-11-27
-**Repositório:** KayzenRoot/zero-trace
-**Issue relacionada:** #32 (item de planejamento já integrado)
-**Branch de execução:** `feat/zt-v01-wo-002-starter-apartment`
+**Repositório:** `KayzenRoot/zero-trace`
+**Issue relacionada:** #32 (planejamento integrado pela PR #32)
+**Branch:** `feat/zt-v01-wo-002-starter-apartment`
+**PR de execução:** [#33](https://github.com/KayzenRoot/zero-trace/pull/33)
 **Base `main`:** `79c9f0f55a520736b47ce7cba64d8c70bd591682`
-**Context Lock de execução:** [ZT-V01-WO-002.json](../locks/ZT-V01-WO-002.json)
+**HEAD de código testado:** `06b6274b99c5ea981bf3b8636a7ec6270554e7f0`
+**Context Lock:** [ZT-V01-WO-002.json](../../locks/ZT-V01-WO-002.json)
+**Checkpoint Delta:** [proposta não promovida](checkpoint-delta.md)
 
-Este Evidence Bundle será atualizado no mesmo branch ao concluir as mudanças autorizadas. Nenhuma aprovação final ou aprovação independente desta execução é declarada neste estágio.
+O HEAD de código acima contém integralmente a implementação e os testes executados. Este Evidence Bundle é publicado em commit documental subsequente; o corpo da PR registra o HEAD final de publicação e seus checks exatos.
 
-## Source Check e governança
+## Source Check, lock e governança
 
-- `git fetch origin main` confirmou `origin/main` em `79c9f0f55a520736b47ce7cba64d8c70bd591682`; a branch foi criada diretamente desse commit.
-- PR #32 está integrada por squash, HEAD `5ba041ac643314a0bf6825ced6459572a3df6ffb`. A comparação da base do planejamento `8b7a76ca4155a164f788fc9f417af54ab9a373d6` com a `main` atual mostra exatamente os seis arquivos documentais da PR #32. O Checkpoint não mudou: blob `6e65d473058f1b8854289af4cd05e34ee6f15edf`.
-- A auditoria de planejamento publicada na issue #32 registrou **APPROVED PARA REVISÃO DO PROPRIETÁRIO**, sem autorização de merge ou execução. Depois desse registro, o proprietário aprovou e integrou a PR #32 e agora autorizou diretamente este Work Order. A revisão automática Copilot não foi concluída por limite de quota; a auditoria independente da PR de execução continua pendente.
-- PR #28 permanece aberta e em draft na branch `wo/zt-d01-wo-001-qa-01-exec`, HEAD protegido `dd1ab1e2d2359e9a0d4a90cb68ca4ef1552beee1`, base original `1b72c6773fc9edd39c44239ec127a75d7ca9d158`. Seus checks no HEAD protegido: `docs-validation`, `Socket Security: Project Report` e `Socket Security: Pull Request Alerts` SUCCESS (3/3). Nenhuma alteração foi feita nela.
-- PR #32 passou nos checks exatos do seu HEAD `5ba041ac643314a0bf6825ced6459572a3df6ffb`: `docs-validation` 140514745422, `Socket Security: Project Report` 140514750548 e `Socket Security: Pull Request Alerts` 140514771959 — SUCCESS (3/3).
-- Na `main` atual, `docs-validation` 140515077010 e `Socket Security: Project Report` 140515125904 são SUCCESS. `Socket Security: Pull Request Alerts` não foi observado no commit de merge da `main`; não se declara 3/3 nessa SHA.
-- Ruleset `ZT-GOV-main`: ID 28038825, enforcement active, alvo `refs/heads/main`, zero bypass actors, bypass do usuário atual `never`; protege contra deleção e non-fast-forward, exige histórico linear, PR com threads resolvidas, merge squash e status obrigatório `docs-validation`.
-- Fingerprints atuais: 33/33 blobs Git críticos e 141/141 arquivos Unity rastreados conferem com a base. O lock de planejamento anterior continua histórico e foi revalidado 29/29 contra seu snapshot próprio `8b7a76ca4155a164f788fc9f417af54ab9a373d6`; não é usado como lock de execução.
+- Source Check fresco confirmou `origin/main` em `79c9f0f55a520736b47ce7cba64d8c70bd591682`, igual à base travada.
+- O Context Lock de execução permanece vinculado à base: **33/33 fingerprints Git críticos**, **141/141 blobs do projeto Unity**, **2/2 SHA-256 canônicos**. Checkpoint: blob `6e65d473058f1b8854289af4cd05e34ee6f15edf`, inalterado.
 - SHA-256 das fontes canônicas conferem com `docs/Sources.md`: GDD `4352e4a2bdf4f7d3925caaa6314ba1b550efe1c3f917ba05acd50aa940ea5ed1`; Mission Catalog `836e305e1fb9777ba1298e76d93b8bfa97d77ebc10b7ed846fae3477e1b0b365`.
-- ADR-011 e ADR-012 em PR #28 conferem com os blobs travados no planejamento. ZT-ADR-013 e ADR-009/010 permanecem intactos.
-- Um arquivo local preexistente não rastreado, `ProjectSettings/SceneTemplateSettings.json`, foi preservado fora do commit; SHA-256 `bb9098b3bfcde78d93e264b96f7b77b5430e64e8c57a7aad7f5a5d9c3945e16a`.
+- A PR #32 foi integrada por squash no HEAD `5ba041ac643314a0bf6825ced6459572a3df6ffb`; a autorização direta do proprietário para executar esta WO é posterior e está registrada no Context Lock. ADR-014 não foi modificada.
+- Ruleset `ZT-GOV-main`, ID `28038825`: ativo em `refs/heads/main`, sem bypass actors; bypass do usuário `never`; deleção e non-fast-forward proibidos, histórico linear, resolução de conversas e squash exigidos, `docs-validation` obrigatório.
+- PR #28 permanece aberta/em draft na branch `wo/zt-d01-wo-001-qa-01-exec`, HEAD protegido `dd1ab1e2d2359e9a0d4a90cb68ca4ef1552beee1`, base `1b72c6773fc9edd39c44239ec127a75d7ca9d158`; seus três checks conhecidos no HEAD protegido foram SUCCESS (3/3). Nenhuma alteração foi feita nela.
+- O arquivo local preexistente `ProjectSettings/SceneTemplateSettings.json` foi preservado fora dos commits; SHA-256 `bb9098b3bfcde78d93e264b96f7b77b5430e64e8c57a7aad7f5a5d9c3945e16a`.
 
-## Preflight local
+## Implementação e escopo
 
-- Unity CLI oficial existente: 1.0.1. Nenhuma atualização ou instalação foi executada.
-- Um único Editor conectado: Unity 6000.3.29f1, estado `ready`, Play Mode `stopped`, sem compilação pendente, `autoRefresh=enabled` e `runInBackground=true`.
-- A licença Personal foi previamente confirmada pelo proprietário; nesta execução o Editor existente abriu e respondeu sem prompt/erro de licença. Não houve reativação, login, leitura de credenciais ou inspeção de logs brutos. A consulta de licença da CLI foi evitada porque, se o cliente local não estiver presente, a CLI pode baixá-lo automaticamente.
-- Nenhum prompt de trial, termos, cloud ou pagamento apareceu durante esta execução. Não houve acesso ao Unity Cloud/UBA/DevOps.
-- Dependências atuais preservadas: URP 17.3.0, Localization 1.5.14, Pipeline 1.0.1; `Packages/manifest.json`, `Packages/packages-lock.json` e `ProjectSettings/ProjectVersion.txt` permanecem na base. A composição prevista usa primitivas e capacidades já instaladas, sem pacote ou asset externo.
-- Inventário de testes existente pelo Editor: EditMode 29; PlayMode 8. Baseline antes da implementação: EditMode **29/29 PASS**, PlayMode **8/8 PASS**, zero falhas/ignorados.
-- Console antes dos testes: `compilationFailed=false`, 1 erro retido. Depois dos testes: 1 erro, 0 warnings, sem falha de compilação. O único evento novo desde o cursor pré-operação correspondeu ao teste negativo existente `[StartupController] Startup interface is unavailable.`; os testes que o emitem passaram. A verificação de status confirmou o Editor `ready` novamente após a troca normal de domínio do PlayMode.
-- Custo adicional: US$ 0. Sem build, cloud, deployment, importação de assets, alteração de dependências ou mudança de licença.
-- A instância usada para o baseline ficou fora do Play Mode ao final.
+- `Assets/ZeroTrace/Presentation/Prototype/LocalPrototypeRoomFactory.cs`: substitui os grandes inlays neon por acabamento discreto; adiciona porta cenográfica, janela estática, sofá compacto, tapete, luminária local e armazenamento modesto. Paredes/colliders originais continuam contínuos atrás da porta e da janela. O computador de recuperação continua sendo o único alvo interativo; seus materiais e os demais materiais runtime usam acabamento pouco especular. Todos os objetos e luzes novos são criados sob o root runtime existente.
+- `Assets/ZeroTrace/Tests/PlayMode/LocalFirstPlayablePlayModeTests.cs`: estende os testes de limites para as regiões da porta e da janela e adiciona regressões de composição/monitor único/raio de interação e restauração de câmera/root.
+- Capturas PlayMode reais estão em `screenshots/` e descritas abaixo.
+- Nenhuma alteração em `LocalFirstPlayableController`, `LocalPrototypePlayerMotor`, `SampleScene`, domínio, save schema, localização, pacotes, manifest, lock, versão do Editor, Checkpoint, ADR-009/010/013/014 ou PR #28.
 
-## Critérios de aceitação — leitura do estágio atual
+## Editor, compilação, testes e Console
 
-| Critério | Estado atual | Evidência |
+- Unity CLI existente **1.0.1**; um único Editor oficial conectado, `6000.3.29f1`, `ready`, `compiling=false`, Play Mode encerrado ao final. Nenhuma instalação, atualização, ativação ou mudança de licença.
+- A licença Personal é sustentada pela confirmação prévia do proprietário e pelo Editor já aberto sem erro/prompt de licença; não foi feita consulta de conta nem leitura de credenciais.
+- `unity recompile --project-path .`: a primeira execução retornou os três avisos abaixo; após o pequeno ajuste final de material, a segunda execução terminou com código zero, mas informou que não conseguiu ler o Console. Em seguida, o Editor registrou `compilationFailed=false`, `compiling=false`, e ambas as suítes completas passaram no código final, comprovando compilação válida do candidato.
+- `unity command --project-path . test run --mode editor --async-tests true --timeout 600`; `unity command --project-path . test status --detail summary`: **29/29 EditMode PASS**, 0 falhas, 0 skips, 0 inconclusivos.
+- `unity command --project-path . test run --mode playmode --async-tests true --timeout 600`; após a troca de domínio, `unity status --until-ready --timeout 120 --project-path .` e `unity command --project-path . test status --detail summary`: **10/10 PlayMode PASS**, 0 falhas, 0 skips, 0 inconclusivos. A primeira consulta de status ocorreu enquanto o Pipeline reconectava; a leitura após `ready` confirmou a execução completa. Nenhum teste foi repetido por esse motivo.
+- Os testes cobrem startup, movimento/visão, ciclo do computador, apps e exercício sintético, retry e save/load, localização, foco, colisão das quatro paredes e das regiões de entrada/janela, safe spawn/recuperação, alvo de interação sem obstrução, monitor único e saída que restaura câmera e remove o root.
+- Diagnósticos de compilação: **3 warnings CS0618 preexistentes**, em `StartupController.cs` linhas 300, 318 e 326; nenhum warning nos arquivos alterados. Não são falhas de compilação.
+- A suíte PlayMode emitiu **1 Error intencional** do teste negativo existente `StartupController` (“startup interface unavailable”); o teste passou. Captura posterior do Console indicou `compilationFailed=false`, `compiling=false` e zero erros/avisos ativos.
+- Uma leitura anterior registrou três eventos `HandleStatusRequest` de conexão interrompida do servidor Unity Pipeline, temporalmente coincidentes com probes de metadata/`--help` que excederam o limite de resposta. Foram classificados como diagnósticos de transporte da ferramenta, não como erros de compilação ou do código da sala; não reapareceram na amostra pós-testes. A CLI recuperou e permaneceu conectada.
+- Não foi executado Player build.
+
+## Inspeção visual e capturas
+
+As imagens foram produzidas pela Unity CLI oficial (`capture game_view --source camera`) com a Main Camera durante Play Mode e foram inspecionadas visualmente. As duas capturas workstation/residential usam o spawn e FOV de jogo padrão; a captura overview reposiciona somente o jogador/câmera durante Play Mode para mostrar a entrada, sem gravar cena ou transformar essa pose em gameplay.
+
+| Captura | Conteúdo | Resolução | SHA-256 |
+| --- | --- | --- | --- |
+| [workstation-residential-1280x720.png](screenshots/workstation-residential-1280x720.png) | Mesa/computador, sofá, janela e armazenamento no spawn padrão | 1280×720 | `68740770e51dc05009bd6b34ace6ae345adebb23deac07d2d13c175a91cb5cf4` |
+| [workstation-residential-1920x1080.png](screenshots/workstation-residential-1920x1080.png) | Mesmo enquadramento no spawn padrão | 1920×1080 | `668bc7e04286f647dba10e8245e1c0d78b60e037e7bba6c2e19b3006ffd19f1d` |
+| [room-overview-entry-1920x1080.png](screenshots/room-overview-entry-1920x1080.png) | Entrada, mesa e cue residencial por ângulo de inspeção runtime | 1920×1080 | `dcef7dfa124eec97a2b861a71b383b294f47104decbf8437d590b52b10e316b0` |
+
+Scorecard local (1–5; revisão do executor, não auditoria independente): leitura de apartamento inicial **4**; legibilidade das pistas residenciais **4**; hierarquia/paleta **4**; proporção dos equipamentos **5**; composição/enquadramento **3**; coerência com primitivas originais **4**. A limitação restante é o acabamento propositalmente simples de protótipo e o teto visível em primeira pessoa; nada foi acrescentado fora da WO para disfarçar essa limitação.
+
+## Integridade, segurança e operações
+
+- `Packages/manifest.json`, `Packages/packages-lock.json` e `ProjectSettings/ProjectVersion.txt` permanecem idênticos à base: URP 17.3.0, Localization 1.5.14, Pipeline 1.0.1 e Editor `6000.3.29f1`.
+- GDD e catálogo mantêm os hashes canônicos acima; Checkpoint e decisões aprovadas não foram alterados.
+- A inspeção do diff confirma apenas fábrica visual, regressões PlayMode e PNGs de evidência. Não há nova dependência, string de UI/localização, acesso de rede/processo, asset importado, credencial ou serviço.
+- Não há build, Unity Cloud/UBA/DevOps, publicação, deploy, assinatura, trial ou despesa. Custo adicional: **US$ 0**.
+- `python .github/scripts/validate_docs.py`: **DOCS_VALIDATION_OK**, 420 briefs originais e verificações documentais reportadas.
+- `git diff --check origin/main`: PASS. `git diff --exit-code origin/main -- Packages/manifest.json Packages/packages-lock.json ProjectSettings/ProjectVersion.txt`: PASS, sem diferenças.
+- Source Check do lock: **33/33** blobs críticos, **141/141** arquivos Unity, SHA-256 do GDD e catálogo e blob do Checkpoint conferem.
+- Busca escopada de segredos nos arquivos textuais da WO: **0 correspondências**. Busca estática nas linhas novas de C#: **0 novas chamadas de filesystem, rede, processo, socket, credenciais ou UnityEditor**.
+
+## Critérios AC01–AC17
+
+| Critério | Estado | Evidência |
 | --- | --- | --- |
-| AC01 — Source Check / Context Lock | PASS | Base exata, 33/33 blobs críticos, 141/141 Unity, 2/2 hashes SHA-256 e governança registrada. |
-| AC02 — autorização | PASS | PR #32 integrada; ADR-014 e Work Order na base; instrução direta do proprietário para executar esta WO. |
-| AC03–AC09 — visual, composição, equipamento, preservação e geometria | PENDENTE | Implementação e inspeção PlayMode ainda não iniciadas. |
-| AC10 — integridade de dependências | PASS de baseline | Manifest, lock e versão do Editor preservados na base; revalidar no HEAD final. |
-| AC11 — testes | Baseline PASS | EditMode 29/29 e PlayMode 8/8 antes da mudança; repetir após o candidato final e adicionar regressões do apartamento. |
-| AC12 — execução local | PASS de baseline | Editor existente pronto; testes licenciados concluídos; revalidar após as alterações. |
-| AC13 — capturas visuais | PENDENTE | Nenhuma captura pós-implementação ainda. |
-| AC14 — documentação e segurança | PENDENTE | Executar validações e buscas escopadas no candidato final. |
-| AC15 — custo e operação | PASS de baseline | US$ 0; sem cloud, build ou deploy até aqui. |
-| AC16 — PR #28 | PASS | Aberta/draft no HEAD exato protegido; checks 3/3 SUCCESS; sem mutação. |
-| AC17 — Evidence Bundle / Checkpoint | EM ANDAMENTO | Lock e evidência inicial preparados; Checkpoint Delta abaixo não promovido. |
+| AC01 — Source Check e Context Lock | PASS | Base e lock exatos; 33/33 fingerprints, 141/141 blobs Unity, 2/2 SHA-256. |
+| AC02 — autorização | PASS | ADR-014 integrada na base e instrução direta do proprietário. |
+| AC03 — alinhamento com Visual Master | PASS (executor) | Capturas reais de ambiente modesto de um único cômodo; sem equipamento premium. |
+| AC04 — composição residencial | PASS | Entrada, janela e sofá estáticos visíveis nas capturas; teste confirma objetos sob o root. |
+| AC05 — limite de equipamento | PASS | Teste conta um monitor físico e um collider alvo no monitor de recuperação. |
+| AC06 — qualidade visual | PASS (executor) | Paleta Obsidian/Carbon/Frost com acentos discretos e scorecard registrado. |
+| AC07 — preservação do fluxo | PASS | 29/29 EditMode e 10/10 PlayMode, incluindo apps, locale, exercício e save/load. |
+| AC08 — colisão e segurança | PASS | Parede contínua; testes tentam sair pelas quatro paredes e pelas regiões da porta/janela; recovery e raio passam. |
+| AC09 — ciclo de vida | PASS | Teste verifica câmera restaurada e root runtime removido. |
+| AC10 — dependências | PASS | Manifest, lock e versão do Editor idênticos à base. |
+| AC11 — testes | PASS | 29/29 EditMode; 10/10 PlayMode; nenhum skip/fail/inconclusivo. |
+| AC12 — execução local | PASS com nota de ferramenta | Editor único e compilação válida pelos testes; três warnings legados e eventos Pipeline transitórios documentados; nenhum erro ativo pós-execução. |
+| AC13 — capturas | PASS | PNGs reais em 1280×720 e 1920×1080, com SHA-256. |
+| AC14 — docs/segurança | PASS local | `DOCS_VALIDATION_OK`, `git diff --check`, dependências/fontes íntegras, 0 correspondências na busca escopada de segredos e 0 chamadas de boundary nas linhas novas. |
+| AC15 — custo/operação | PASS | US$ 0; sem cloud, trial, termos, pagamento, build ou deploy. |
+| AC16 — PR #28 | PASS | Leitura final: PR #28 aberta/draft no HEAD `dd1ab1e2d2359e9a0d4a90cb68ca4ef1552beee1`; docs-validation, Socket Project Report e Socket PR Alerts SUCCESS (3/3); sem mutação. |
+| AC17 — evidências/checkpoint | PASS | Evidence Bundle publicado; Checkpoint Delta segue proposta não promovida. |
 
-## Diff, implementação e capturas
+## Checkpoint Delta e disposição
 
-Ainda não houve mudança de código, cena, pacote ou asset. A atualização fica limitada ao Context Lock de execução e a esta evidência inicial; as evidências de implementação e capturas reais serão adicionadas após a validação do candidato.
+Propõe-se registrar somente a leitura visual local/offline de uma sala do protótipo técnico como apartamento inicial modesto. `docs/Checkpoint.md` permanece inalterado; D01 segue incompleto, QA-01 não qualificado, D02 e D09 continuam bloqueados. O Delta não é promoção, missão canônica, vertical slice, release nem aprovação de assets de produção.
 
-## Checkpoint Delta — proposta NÃO PROMOVIDA
-
-Propor somente o registro de um refinamento visual local/offline da sala técnica para apartamento inicial modesto, caso os critérios e auditoria independente sejam aprovados. `docs/Checkpoint.md` permanece inalterado; D01 segue incompleto, QA-01 não qualificado, D02 e D09 bloqueados. O refinamento não representa missão canônica, vertical slice, release ou conclusão de qualquer gate do DAG.
-
-## Limitações e riscos atuais
-
-- A execução ainda não foi implementada nem recebeu auditoria independente.
-- O estado da licença corrente é sustentado pela confirmação anterior do proprietário e pelo funcionamento do Editor já aberto, sem reativação ou consulta que possa instalar o cliente de licenciamento. Não há alegação de verificação da conta Unity por API.
-- A entrada Error de Console é deliberada no teste negativo aprovado; será distinguida de erros de compilação e de novas falhas no candidato final.
-- A confirmação visual, interação por raio, limites, restauração de câmera e screenshots ainda dependem da execução das regressões específicas do WO-002.
+**Disposição:** candidato submetido para auditoria independente na PR #33, ainda em draft. Sem merge, promoção de checkpoint ou avanço de Work Order.
