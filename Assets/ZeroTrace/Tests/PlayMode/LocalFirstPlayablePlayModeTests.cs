@@ -228,7 +228,13 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
             Assert.That(MoveAndReadPosition(motor.transform, characterController,
                 new Vector3(2.2f, 0f, -2.4f), Vector3.forward * 0.25f).z, Is.GreaterThan(-2.4f));
             Assert.That(MoveAndReadPosition(motor.transform, characterController,
+                new Vector3(-2.55f, 0f, -3.2f), Vector3.back * 2f).z, Is.GreaterThan(-3.8f),
+                "The decorative entrance must remain backed by the solid front wall.");
+            Assert.That(MoveAndReadPosition(motor.transform, characterController,
                 new Vector3(3.2f, 0f, -2.4f), Vector3.right * 2f).x, Is.LessThan(3.8f));
+            Assert.That(MoveAndReadPosition(motor.transform, characterController,
+                new Vector3(3.2f, 0f, 2f), Vector3.right * 2f).x, Is.LessThan(3.8f),
+                "The decorative window must remain backed by the solid right wall.");
             Assert.That(MoveAndReadPosition(motor.transform, characterController,
                 new Vector3(-3.2f, 0f, -2.4f), Vector3.left * 2f).x, Is.GreaterThan(-3.8f));
             Assert.That(MoveAndReadPosition(motor.transform, characterController,
@@ -254,6 +260,88 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
             Assert.That(controller.InteractWithComputer(), Is.True);
             yield return WaitForComputerReady();
             Assert.That(controller.ComputerState, Is.EqualTo(LocalComputerState.Ready));
+        }
+
+        [UnityTest]
+        public IEnumerator StarterApartmentCompositionKeepsSingleMonitorAndComputerTarget()
+        {
+            controller.SetProgressStoreForSession(new MemoryProgressStore());
+            Assert.That(controller.StartPrototype(), Is.True);
+            yield return null;
+
+            var roomRoot = GameObject.Find("ZERO TRACE Local Prototype Room");
+            Assert.That(roomRoot, Is.Not.Null);
+            AssertNamedRoomObject(roomRoot.transform, "Apartment Entrance Door Panel");
+            AssertNamedRoomObject(roomRoot.transform, "Apartment Window Pane");
+            AssertNamedRoomObject(roomRoot.transform, "Apartment Sofa Seat");
+            AssertNamedRoomObject(roomRoot.transform, "Apartment Storage Cabinet");
+
+            var door = roomRoot.transform.Find("Apartment Entrance Door Panel").gameObject;
+            var pane = roomRoot.transform.Find("Apartment Window Pane").gameObject;
+            Assert.That(door.GetComponent<Collider>().enabled, Is.False,
+                "The entrance is set dressing; the wall behind it provides the boundary.");
+            Assert.That(pane.GetComponent<Collider>().enabled, Is.False,
+                "The window is set dressing; the wall behind it provides the boundary.");
+
+            var monitorCount = 0;
+            var targetCount = 0;
+            foreach (var transform in roomRoot.GetComponentsInChildren<Transform>(true))
+            {
+                if (transform.name == "Recovery Computer Monitor")
+                {
+                    monitorCount++;
+                    var collider = transform.GetComponent<Collider>();
+                    if (collider != null && collider.enabled)
+                    {
+                        targetCount++;
+                    }
+                }
+
+                Assert.That(transform == roomRoot.transform || transform.IsChildOf(roomRoot.transform), Is.True,
+                    "Generated room objects must remain under the prototype root.");
+            }
+
+            Assert.That(monitorCount, Is.EqualTo(1));
+            Assert.That(targetCount, Is.EqualTo(1));
+            Assert.That(controller.IsLookingAtComputer, Is.True,
+                "The apartment dressing must not intercept the approved spawn-to-computer ray.");
+            Assert.That(controller.InteractWithComputer(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.ComputerState, Is.EqualTo(LocalComputerState.Ready));
+        }
+
+        [UnityTest]
+        public IEnumerator StarterApartmentExitRestoresCameraAndRemovesGeneratedRoot()
+        {
+            controller.SetProgressStoreForSession(new MemoryProgressStore());
+            var camera = Camera.main;
+            Assert.That(camera, Is.Not.Null);
+            var originalParent = camera.transform.parent;
+            var originalPosition = camera.transform.localPosition;
+            var originalRotation = camera.transform.localRotation;
+            var originalScale = camera.transform.localScale;
+            var originalEnabled = camera.enabled;
+
+            Assert.That(controller.StartPrototype(), Is.True);
+            Assert.That(camera.transform.parent, Is.Not.EqualTo(originalParent));
+            Assert.That(GameObject.Find("ZERO TRACE Local Prototype Room"), Is.Not.Null);
+
+            controller.ExitPrototype();
+            yield return null;
+
+            Assert.That(GameObject.Find("ZERO TRACE Local Prototype Room"), Is.Null);
+            Assert.That(camera.transform.parent, Is.EqualTo(originalParent));
+            Assert.That(camera.transform.localPosition, Is.EqualTo(originalPosition));
+            Assert.That(camera.transform.localRotation, Is.EqualTo(originalRotation));
+            Assert.That(camera.transform.localScale, Is.EqualTo(originalScale));
+            Assert.That(camera.enabled, Is.EqualTo(originalEnabled));
+        }
+
+        private static void AssertNamedRoomObject(Transform root, string objectName)
+        {
+            var child = root.Find(objectName);
+            Assert.That(child, Is.Not.Null, objectName + " should be present in the generated apartment.");
+            Assert.That(child.IsChildOf(root), Is.True);
         }
 
         [UnityTest]
