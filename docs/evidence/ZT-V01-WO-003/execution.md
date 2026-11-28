@@ -38,7 +38,33 @@ O bundle e as capturas são acrescentados em commit documental posterior ao HEAD
 - `unity command test run --mode editor --async-tests true --timeout 900 --project-path <checkout> --caller plugin --skill unity-cli`; `unity command test status --detail summary`: **65/65 EditMode PASS**, 0 falhas, 0 skips, 0 inconclusivos.
 - `unity command test run --mode playmode --async-tests true --timeout 900 --project-path <checkout> --caller plugin --skill unity-cli`; `unity command test status --detail summary`: **13/13 PlayMode PASS**, 0 falhas, 0 skips, 0 inconclusivos.
 - As suítes são completas, sem filtros nem exclusões artificiais. Não foi feito Player build.
-- Console foi preservado sem `console clear`. Snapshot final: `compilationFailed=false`, `consoleErrors=1`, `consoleWarnings=0`. O único erro agregado já existia no baseline anterior a esta implementação e corresponde ao aviso de metadados `SharedTableData Name Guid` divergente do GUID do asset; não é erro de compilação nem foi introduzido por esta WO. Não alego Console sem erros.
+- **Console Unity atual, sem limpeza nesta reconciliação (27/11/2026):** na leitura visual do Editor, o contador mostrou **1 Error e 0 Warnings**. A entrada selecionada exibia o horário local 14:59:45, conforme apresentado pela UI, e o diagnóstico completo:
+  ~~~text
+  [StartupController] Startup interface is unavailable.
+  UnityEngine.Debug:LogError (object)
+  ZeroTrace.Presentation.StartupController:ShowUnavailable (string,string) (at Assets/ZeroTrace/Presentation/Startup/StartupController.cs:472)
+  ZeroTrace.Presentation.StartupController/<InitializeOnNextFrame>d__40:MoveNext () (at Assets/ZeroTrace/Presentation/Startup/StartupController.cs:109)
+  UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+  ~~~
+  O Editor.log registra essa mensagem nas linhas 14657–14668, além de repetições nas linhas 15680–15691, 16281–16292, 20016–20027 e 20573–20584. Ela corresponde ao erro intencional do teste negativo já descrito no [Evidence Bundle WO-002](../../evidence/ZT-V01-WO-002/execution.md), linhas 42 e 84; não é falha de compilação nem erro novo do Terminal. O arquivo local tinha 2.331.574 bytes e última gravação 2026-11-27T23:22:56.3712510Z; seu SHA-256 havia sido calculado em leitura anterior (2223bd41dc4fef2cf0f733837df3d69e25db4595c0bb4c5c3d253b56c577e15e), com o mesmo tamanho e mtime confirmados nesta inspeção.
+- **Diagnóstico objeto da auditoria:** a captura anterior da CLI Unity associou o Assert a 2026-11-27T15:27:25.0924575Z (UTC), com compilationFailed=false, compiling=false, consoleErrors=1 e consoleWarnings=0. O console.get retornou oito registros históricos Error: cinco logs do teste negativo StartupController, dois diagnósticos transitórios de compilação (CS0117/CS1061, corrigidos antes da compilação final) e o Assert de Localization. Esse total histórico não significa oito erros simultaneamente ativos. O Editor.log atual registra o diagnóstico na linha 5974, com mensagem e stack completo (linhas 5974–5985):
+  ~~~text
+  SharedTableData Name Guid does not match the assets Guid. This may cause issues matching the correct TableCollectionName.
+  UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+  UnityEngine.StackTraceUtility:ExtractStackTrace ()
+  UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+  UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+  UnityEngine.Logger:Log (UnityEngine.LogType,object,UnityEngine.Object)
+  UnityEngine.Debug:Assert (bool,string,UnityEngine.Object)
+  UnityEditor.Localization.LocalizationAssetPostProcessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at ./Library/PackageCache/com.unity.localization@5ae578344e19/Editor/Asset Pipeline/LocalizationAssetPostProcessor.cs:69)
+  System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+  System.Reflection.MethodBase:Invoke (object,object[])
+  UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+  UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+  ~~~
+- **Comparação de baseline:** o Editor-prev.log local, SHA-256 a662f67c428569d0ca174fa1d633fb3697f7c798d0ebf76ff8a29b7667cc8b40, última gravação 2026-11-27T15:18:44.2110896Z, contém a mesma mensagem e o mesmo stack nas linhas 5967–5978. Seu cabeçalho identifica o checkout anterior pelo sufixo sanitizado <perfil>/.codex/worktrees/zt-v01-first-playable/zero-trace-main, correspondente à linha de trabalho WO-002; o arquivo não foi copiado para o repositório. O diagnóstico já constava nesse checkout no commit WO-002 b596150f055d83947447d99aca5bda643f5e67cd e foi gravado antes do commit de código WO-003 (2b74749038838d949774c4b94bca3f5ebb107880, 27/11/2026 13:27:31 -03:00). A comparação dos assets das tabelas de localização e de Packages/manifest.json e Packages/packages-lock.json entre o checkout WO-002, a base WO-003 e o commit de código WO-003 não apontou mudanças nesses caminhos.
+- **Reconciliação da leitura WO-002:** o bundle WO-002 registrou compilationFailed=false, compiling=false e zero erros/avisos ativos após os testes (linhas 42 e 84). O Editor-prev.log que contém o Assert foi gravado depois da publicação desse bundle (b596150, 27/11/2026 11:20:01 -03:00) e antes do commit de código WO-003. A sequência é compatível com o diagnóstico do callback OnPostprocessAllAssets numa sessão posterior do checkout WO-002 e não contradiz aquele snapshot pós-testes. A leitura visual mais recente mostra o Error intencional de StartupController, enquanto a captura anterior da CLI mostrava o Assert de Localization; são observações em momentos distintos.
+- **Conclusão de proveniência:** o SharedTableData é um Assert do UnityEditor.Localization.LocalizationAssetPostProcessor comprovado no checkout WO-002 antes da implementação WO-003, independente do código Terminal. O erro ativo visto na inspeção mais recente é o caso negativo já documentado de StartupController. Nenhuma correção de código é indicada. O HEAD de código permanece 2b74749038838d949774c4b94bca3f5ebb107880; esta correção altera somente este Evidence Bundle, portanto as suítes não foram repetidas.
 
 ## Inspeção visual
 
