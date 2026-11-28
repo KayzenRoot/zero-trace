@@ -20,9 +20,11 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
         {
             private LocalPrototypeProgress value = new LocalPrototypeProgress();
             public bool FailNextSave;
+            public int SaveCount;
             public LocalPrototypeProgress Load() => value.Copy();
             public void Save(LocalPrototypeProgress progress)
             {
+                SaveCount++;
                 if (FailNextSave)
                 {
                     FailNextSave = false;
@@ -425,6 +427,196 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
             Assert.That(controller.ExerciseAttemptCount, Is.EqualTo(1));
         }
 
+        [UnityTest]
+        public IEnumerator TerminalUsesKeyboardHistoryFocusLocaleAndCloseLifecycle()
+        {
+            var store = new MemoryProgressStore();
+            controller.SetProgressStoreForSession(store);
+            Assert.That(controller.StartPrototype(), Is.True);
+            Assert.That(controller.OpenApp("terminal"), Is.False,
+                "Terminal must not open before the fictional computer reaches Ready.");
+            Assert.That(controller.BeginComputerBootForInteraction(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.PlayerControlsEnabled, Is.False);
+            Assert.That(controller.OpenApp("terminal"), Is.True);
+            yield return null;
+
+            var root = startup.Document.rootVisualElement;
+            var input = root.Q<TextField>("terminal-input");
+            var output = root.Q<ScrollView>("terminal-output");
+            Assert.That(input, Is.Not.Null);
+            Assert.That(output, Is.Not.Null);
+            Assert.That(input.maxLength, Is.EqualTo(256));
+            Assert.That(input.focusable, Is.True);
+            Assert.That(root.Q<Button>("terminal-run").focusable, Is.True);
+            Assert.That(root.Q<Button>("terminal-clear-output").focusable, Is.True);
+            Assert.That(root.Q<Button>("prototype-app-close").focusable, Is.True);
+
+            input.Focus();
+            Assert.That(input.focusController.focusedElement, Is.SameAs(input));
+            var keyDownObserved = false;
+            var rootKeyDownObserved = false;
+            input.RegisterCallback<KeyDownEvent>(_ => keyDownObserved = true);
+            root.RegisterCallback<KeyDownEvent>(_ => rootKeyDownObserved = true);
+            input.SetValueWithoutNotify("help");
+            Assert.That(input.value, Is.EqualTo("help"));
+            SendKey(input, KeyCode.Return);
+            yield return null;
+            Assert.That(keyDownObserved || rootKeyDownObserved, Is.True,
+                "The synthesized key event must be delivered through the UI Toolkit panel.");
+            Assert.That(output.contentContainer.Q<Label>("terminal-output-line-0").text,
+                Does.Contain("files.read <file-id|filename.txt>"));
+            Assert.That(output.contentContainer.Q<Label>("terminal-output-line-0").resolvedStyle.fontSize,
+                Is.GreaterThanOrEqualTo(16f), "Terminal body text must remain readable at the specified minimum size.");
+
+            input.SetValueWithoutNotify("files.list");
+            SendKey(input, KeyCode.Return);
+            yield return null;
+            Assert.That(output.contentContainer.Q<Label>("terminal-output-line-1").text,
+                Does.Contain("recovery_manifest.txt"));
+
+            input.SetValueWithoutNotify("draft-command");
+            SendKey(input, KeyCode.UpArrow);
+            Assert.That(input.value, Is.EqualTo("files.list"));
+            SendKey(input, KeyCode.UpArrow);
+            Assert.That(input.value, Is.EqualTo("help"));
+            SendKey(input, KeyCode.DownArrow);
+            Assert.That(input.value, Is.EqualTo("files.list"));
+            SendKey(input, KeyCode.DownArrow);
+            Assert.That(input.value, Is.EqualTo("draft-command"));
+
+            SendKey(input, KeyCode.Tab);
+            yield return null;
+            var runButton = root.Q<Button>("terminal-run");
+            var clearButton = root.Q<Button>("terminal-clear-output");
+            var closeButton = root.Q<Button>("prototype-app-close");
+            Assert.That(input.focusController.focusedElement, Is.SameAs(runButton),
+                "Tab must move focus from input to Run.");
+            SendKey(runButton, KeyCode.Tab);
+            Assert.That(input.focusController.focusedElement, Is.SameAs(clearButton));
+            SendKey(clearButton, KeyCode.Tab);
+            Assert.That(input.focusController.focusedElement, Is.SameAs(closeButton));
+            SendKey(closeButton, KeyCode.Tab);
+            Assert.That(input.focusController.focusedElement, Is.SameAs(input),
+                "The terminal focus ring must wrap to the input.");
+
+            LocalizationSettings.SelectedLocale = Resources.Load<Locale>("Localization/Locales/Locale-pt-BR");
+            yield return WaitForLocale("pt-BR");
+            yield return null;
+            root = startup.Document.rootVisualElement;
+            input = root.Q<TextField>("terminal-input");
+            output = root.Q<ScrollView>("terminal-output");
+            Assert.That(input.value, Is.EqualTo("draft-command"),
+                "Locale rebuild must preserve the in-progress terminal input.");
+            Assert.That(output.contentContainer.Q<Label>("terminal-output-line-1").text,
+                Does.Contain("Arquivos sintéticos"));
+            Assert.That(controller.ActiveApp, Is.EqualTo(LocalPrototypeApp.Terminal));
+
+            Assert.That(controller.CloseActiveApp(), Is.True);
+            Assert.That(controller.OpenApp("terminal"), Is.True);
+            yield return null;
+            root = startup.Document.rootVisualElement;
+            input = root.Q<TextField>("terminal-input");
+            output = root.Q<ScrollView>("terminal-output");
+            Assert.That(output.contentContainer.Q<Label>("terminal-output-line-1").text,
+                Does.Contain("Arquivos sintéticos"), "Closing Terminal must keep its session transcript.");
+            input.SetValueWithoutNotify(string.Empty);
+            SendKey(input, KeyCode.UpArrow);
+            Assert.That(input.value, Is.EqualTo("files.list"), "Closing Terminal must keep command history.");
+            Assert.That(store.SaveCount, Is.Zero, "Read-only Terminal commands must not write progress.");
+        }
+
+        [UnityTest]
+        public IEnumerator TerminalClearAndShutdownAreReadOnlyAndResetSession()
+        {
+            var store = new MemoryProgressStore();
+            controller.SetProgressStoreForSession(store);
+            Assert.That(controller.StartPrototype(), Is.True);
+            Assert.That(controller.BeginComputerBootForInteraction(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.OpenApp("terminal"), Is.True);
+            yield return null;
+
+            var root = startup.Document.rootVisualElement;
+            var input = root.Q<TextField>("terminal-input");
+            var output = root.Q<ScrollView>("terminal-output");
+            for (var index = 0; index < 12; index++)
+            {
+                input.SetValueWithoutNotify("help");
+                SendKey(input, KeyCode.Return);
+                yield return null;
+            }
+
+            Assert.That(output.contentContainer.childCount, Is.EqualTo(12));
+            Assert.That(output.verticalScroller.highValue, Is.GreaterThan(output.verticalScroller.lowValue),
+                "Terminal output must be scrollable when it exceeds the visible viewport.");
+
+            input.SetValueWithoutNotify("clear");
+            SendKey(input, KeyCode.Return);
+            yield return null;
+            Assert.That(output.contentContainer.childCount, Is.Zero);
+            SendKey(input, KeyCode.UpArrow);
+            Assert.That(input.value, Is.EqualTo("clear"), "clear must not erase command history.");
+            Assert.That(store.SaveCount, Is.Zero);
+
+            Assert.That(controller.ShutdownComputer(), Is.True);
+            Assert.That(controller.ActiveApp, Is.EqualTo(LocalPrototypeApp.None));
+            Assert.That(controller.BeginComputerBootForInteraction(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.OpenApp("terminal"), Is.True);
+            yield return null;
+            root = startup.Document.rootVisualElement;
+            input = root.Q<TextField>("terminal-input");
+            output = root.Q<ScrollView>("terminal-output");
+            SendKey(input, KeyCode.UpArrow);
+            Assert.That(input.value, Is.Empty, "Shutdown and reboot must reset session history.");
+            Assert.That(output.contentContainer.childCount, Is.Zero,
+                "Shutdown and reboot must reset terminal output.");
+            Assert.That(store.SaveCount, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator TerminalProducesActualPlayModeEvidenceInBothLocales()
+        {
+            controller.SetProgressStoreForSession(new MemoryProgressStore());
+            Assert.That(controller.StartPrototype(), Is.True);
+            Assert.That(controller.BeginComputerBootForInteraction(), Is.True);
+            yield return WaitForComputerReady();
+            Assert.That(controller.OpenApp("terminal"), Is.True);
+            yield return null;
+            yield return CaptureTerminalScreenshot("terminal-open-en-US.png");
+
+            var root = startup.Document.rootVisualElement;
+            var input = root.Q<TextField>("terminal-input");
+            input.SetValueWithoutNotify("files.read recovery_manifest.txt");
+            SendKey(input, KeyCode.Return);
+            yield return null;
+            Assert.That(root.Q<ScrollView>("terminal-output").contentContainer
+                .Q<Label>("terminal-output-line-0").text,
+                Does.Contain("Recovery index: locate this synthetic file"));
+            yield return CaptureTerminalScreenshot("terminal-read-en-US.png");
+
+            input = startup.Document.rootVisualElement.Q<TextField>("terminal-input");
+            input.SetValueWithoutNotify("os.shutdown");
+            SendKey(input, KeyCode.Return);
+            yield return null;
+            Assert.That(startup.Document.rootVisualElement.Q<ScrollView>("terminal-output").contentContainer
+                .Q<Label>("terminal-output-line-1").text, Does.Contain("ERROR:"));
+            yield return CaptureTerminalScreenshot("terminal-invalid-command-en-US.png");
+
+            LocalizationSettings.SelectedLocale = Resources.Load<Locale>("Localization/Locales/Locale-pt-BR");
+            yield return WaitForLocale("pt-BR");
+            root = startup.Document.rootVisualElement;
+            input = root.Q<TextField>("terminal-input");
+            input.SetValueWithoutNotify("files.read briefing");
+            SendKey(input, KeyCode.Return);
+            yield return null;
+            Assert.That(root.Q<ScrollView>("terminal-output").contentContainer
+                .Q<Label>("terminal-output-line-2").text,
+                Does.Contain("Nota de treinamento: esta sessão fictícia"));
+            yield return CaptureTerminalScreenshot("terminal-pt-BR.png");
+        }
+
         private static Vector3 MoveAndReadPosition(Transform player, CharacterController characterController,
             Vector3 start, Vector3 movement)
         {
@@ -461,6 +653,35 @@ namespace ZeroTrace.Presentation.Tests.PlayMode
             }
 
             Assert.That(startup.CurrentLocaleCode, Is.EqualTo(code));
+        }
+
+        private static void SendKey(VisualElement target, KeyCode keyCode)
+        {
+            target.Focus();
+            using (var keyEvent = KeyDownEvent.GetPooled('\0', keyCode, EventModifiers.None))
+            {
+                keyEvent.target = target;
+                target.panel.visualTree.SendEvent(keyEvent);
+            }
+        }
+
+        private IEnumerator CaptureTerminalScreenshot(string fileName)
+        {
+            var directory = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "docs", "evidence",
+                "ZT-V01-WO-003", "screenshots"));
+            Directory.CreateDirectory(directory);
+            var path = Path.Combine(directory, fileName);
+            yield return new WaitForEndOfFrame();
+            ScreenCapture.CaptureScreenshot(path, 1);
+
+            var deadline = Time.realtimeSinceStartup + 10f;
+            while ((!File.Exists(path) || new FileInfo(path).Length == 0) && Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(File.Exists(path), Is.True, "The actual PlayMode screenshot was not written: " + fileName);
+            Assert.That(new FileInfo(path).Length, Is.GreaterThan(0));
         }
     }
 }
